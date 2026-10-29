@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hội Chữ Thập Đỏ Việt Nam - 80 Năm Hành Trình Nhân Đạo & Luật Hoạt Động</title>
+    <title>Hội Chữ Thập Đỏ Việt Nam - 80 Năm Hành Trình Nhân Đạo & Trò Chơi Tương Tác</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     
     <script>
         tailwind.config = {
@@ -27,8 +29,11 @@
                             900: '#7f1d1d',
                         },
                         youthblue: {
-                            500: '#00529C',
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#00529C', // Màu xanh thanh niên
                             600: '#00407a',
+                            700: '#00315e',
                         }
                     },
                     fontFamily: {
@@ -47,7 +52,7 @@
         }
         
         .glass-header {
-            background: rgba(255, 255, 255, 0.88);
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
@@ -63,77 +68,50 @@
             50% { box-shadow: 0 0 0 12px rgba(218, 37, 28, 0); }
         }
 
-        @keyframes shimmer {
-            100% { transform: translateX(100%); }
+        @keyframes verticalGlow {
+            0%, 100% { background-color: #da251c; color: #ffffff; box-shadow: 0 0 15px rgba(218, 37, 28, 0.8); }
+            50% { background-color: #fbbf24; color: #7f1d1d; box-shadow: 0 0 25px rgba(251, 191, 36, 1); }
         }
 
-        .animate-float {
-            animation: float 4s ease-in-out infinite;
-        }
+        .animate-float { animation: float 4s ease-in-out infinite; }
+        .pulse-glow { animation: pulseGlow 2s infinite; }
+        .vertical-highlight { animation: verticalGlow 1.5s infinite; }
 
-        .pulse-glow {
-            animation: pulseGlow 2s infinite;
-        }
-
-        /* SCROLL REVEAL ANIMATIONS (INTERSECTION OBSERVER) */
+        /* SCROLL REVEAL ANIMATIONS */
         .reveal {
             opacity: 0;
-            transform: translateY(35px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(30px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: opacity, transform;
         }
-
-        .reveal-left {
-            opacity: 0;
-            transform: translateX(-40px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: opacity, transform;
-        }
-
-        .reveal-right {
-            opacity: 0;
-            transform: translateX(40px);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: opacity, transform;
-        }
-
-        .reveal-scale {
-            opacity: 0;
-            transform: scale(0.92);
-            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: opacity, transform;
-        }
-
-        .reveal.active, .reveal-left.active, .reveal-right.active, .reveal-scale.active {
+        .reveal.active {
             opacity: 1;
-            transform: translateY(0) translateX(0) scale(1);
+            transform: translateY(0);
         }
 
-        /* DELAY CLASSES FOR STAGGERED REVEALS */
-        .delay-100 { transition-delay: 100ms; }
-        .delay-200 { transition-delay: 200ms; }
-        .delay-300 { transition-delay: 300ms; }
-        .delay-400 { transition-delay: 400ms; }
+        /* CROSSWORD CELL STYLING */
+        .cw-cell {
+            width: 38px;
+            height: 38px;
+            text-align: center;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+        @media (max-width: 640px) {
+            .cw-cell { width: 30px; height: 30px; font-size: 13px; border-radius: 6px; }
+        }
 
-        /* CARD HOVER EFFECTS */
-        .card-img-zoom {
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .card-hover:hover .card-img-zoom {
-            transform: scale(1.08);
+        /* CERTIFICATE WATERMARK */
+        .cert-bg {
+            background-image: radial-gradient(circle at center, rgba(218, 37, 28, 0.05) 0%, transparent 70%);
         }
 
-        /* CUSTOM SCROLLBAR */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #da251c;
-            border-radius: 4px;
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #da251c; border-radius: 4px; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
@@ -157,17 +135,24 @@
                 </a>
 
                 <!-- Desktop Navigation Links -->
-                <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 text-sm font-semibold">
-                    <a href="#trang-chu" class="px-3 py-2 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition duration-200">Trang chủ</a>
-                    <a href="#7-linh-vuc" class="px-3 py-2 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition duration-200">7 Lĩnh vực</a>
-                    <a href="#lich-su" class="px-3 py-2 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition duration-200">Lịch sử 80 năm</a>
-                    <a href="#nguyen-tac" class="px-3 py-2 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition duration-200">Nguyên tắc & Biểu tượng</a>
-                    <a href="#tra-cuu" class="px-3 py-2 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition duration-200">Tra cứu Luật</a>
+                <nav class="hidden lg:flex items-center space-x-1 text-sm font-semibold">
+                    <a href="#trang-chu" class="px-3 py-2 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition">Trang chủ</a>
+                    <a href="#tro-choi-o-chu" class="px-3 py-2 rounded-xl text-amber-600 bg-amber-50 hover:bg-amber-100 font-bold transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-puzzle-piece text-amber-500"></i>
+                        <span>Giải Ô Chữ</span>
+                    </a>
+                    <a href="#tro-choi-trac-nghiem" class="px-3 py-2 rounded-xl text-youthblue-500 bg-youthblue-50 hover:bg-youthblue-100 font-bold transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-gamepad text-youthblue-500"></i>
+                        <span>Đấu Trí Trắc Nghiệm</span>
+                    </a>
+                    <a href="#7-linh-vuc" class="px-3 py-2 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition">7 Lĩnh vực</a>
+                    <a href="#lich-su" class="px-3 py-2 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition">Lịch sử</a>
+                    <a href="#tra-cuu" class="px-3 py-2 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition">Tra cứu Luật</a>
                 </nav>
 
                 <!-- Mobile Navigation Toggle -->
-                <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" type="button" class="p-2.5 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-slate-100 focus:outline-none transition" aria-label="Toggle Navigation">
+                <div class="lg:hidden flex items-center">
+                    <button id="mobile-menu-btn" type="button" class="p-2.5 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-slate-100 transition" aria-label="Toggle Menu">
                         <i id="menu-icon" class="fa-solid fa-bars text-xl"></i>
                     </button>
                 </div>
@@ -175,66 +160,193 @@
         </div>
 
         <!-- Mobile Navigation Drawer -->
-        <div id="mobile-menu" class="hidden md:hidden border-b border-slate-200 bg-white/95 backdrop-blur-md px-4 pt-2 pb-4 space-y-1 shadow-lg transition-all duration-300">
-            <a href="#trang-chu" class="mobile-link block px-3 py-2.5 rounded-xl text-base font-semibold text-slate-700 hover:bg-redcross-50 hover:text-redcross-600">Trang chủ</a>
-            <a href="#7-linh-vuc" class="mobile-link block px-3 py-2.5 rounded-xl text-base font-semibold text-slate-700 hover:bg-redcross-50 hover:text-redcross-600">7 Lĩnh vực hoạt động</a>
-            <a href="#lich-su" class="mobile-link block px-3 py-2.5 rounded-lg text-base font-semibold text-slate-700 hover:bg-redcross-50 hover:text-redcross-600">Lịch sử 80 năm hình thành</a>
-            <a href="#nguyen-tac" class="mobile-link block px-3 py-2.5 rounded-lg text-base font-semibold text-slate-700 hover:bg-redcross-50 hover:text-redcross-600">Nguyên tắc & Biểu tượng</a>
-            <a href="#tra-cuu" class="mobile-link block px-3 py-2.5 rounded-lg text-base font-semibold text-slate-700 hover:bg-redcross-50 hover:text-redcross-600">Tra cứu Điều luật</a>
+        <div id="mobile-menu" class="hidden lg:hidden border-b border-slate-200 bg-white px-4 pt-2 pb-4 space-y-1 shadow-lg">
+            <a href="#trang-chu" class="mobile-link block px-3 py-2.5 rounded-xl font-semibold text-slate-700 hover:bg-redcross-50">Trang chủ</a>
+            <a href="#tro-choi-o-chu" class="mobile-link block px-3 py-2.5 rounded-xl font-bold text-amber-600 bg-amber-50">🎮 Giải Ô Chữ Nhân Đạo</a>
+            <a href="#tro-choi-trac-nghiem" class="mobile-link block px-3 py-2.5 rounded-xl font-bold text-youthblue-500 bg-youthblue-50">⚡ Đấu Trí Trắc Nghiệm</a>
+            <a href="#7-linh-vuc" class="mobile-link block px-3 py-2.5 rounded-xl font-semibold text-slate-700 hover:bg-redcross-50">7 Lĩnh vực hoạt động</a>
+            <a href="#lich-su" class="mobile-link block px-3 py-2.5 rounded-xl font-semibold text-slate-700 hover:bg-redcross-50">Lịch sử 80 năm</a>
+            <a href="#tra-cuu" class="mobile-link block px-3 py-2.5 rounded-xl font-semibold text-slate-700 hover:bg-redcross-50">Tra cứu Điều luật</a>
         </div>
     </header>
 
     <main class="flex-grow">
         <!-- Hero Banner Section -->
-        <section id="trang-chu" class="relative bg-gradient-to-br from-redcross-900 via-redcross-700 to-redcross-600 text-white overflow-hidden py-20 sm:py-28">
+        <section id="trang-chu" class="relative bg-gradient-to-br from-redcross-900 via-redcross-700 to-redcross-600 text-white overflow-hidden py-16 sm:py-24">
             <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#fff_1.5px,transparent_1.5px)] [background-size:24px_24px]"></div>
             
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
                 <!-- Floating Celebration Badge -->
                 <div class="inline-flex items-center space-x-2 bg-white/15 backdrop-blur-md px-4 py-2 rounded-full text-xs sm:text-sm font-bold mb-6 border border-white/25 shadow-lg animate-float">
                     <i class="fa-solid fa-award text-amber-300 text-base"></i>
-                    <span>Kỷ niệm 80 Năm Thành Lập Hội Chữ Thập Đỏ Việt Nam (23/11/1946 - 23/11/2026)</span>
+                    <span>Kỷ niệm 80 Năm Thành Lập Hội Chữ Thập Đỏ Việt Nam (1946 - 2026)</span>
                 </div>
 
-                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight max-w-5xl mx-auto leading-tight sm:leading-none reveal">
-                    CHỮ THẬP ĐỎ VIỆT NAM<br>
-                    <span class="text-amber-300 drop-shadow-md">VÌ MỌI NƯỜI, Ở MỌI NƠI</span>
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight max-w-5xl mx-auto leading-tight sm:leading-none">
+                    HÀNH TRÌNH NHÂN ĐẠO<br>
+                    <span class="text-amber-300 drop-shadow-md">VỪA HỌC VỪA CHƠI - THỬ THÁCH ĐẤU TRÍ</span>
                 </h1>
 
-                <p class="mt-6 text-base sm:text-xl font-medium text-redcross-100 max-w-3xl mx-auto leading-relaxed reveal delay-100">
-                    Cổng thông tin tuyên truyền pháp luật theo <strong>Luật Hoạt động Chữ thập đỏ số 11/2008/QH12</strong> và tôn vinh truyền thống nhân ái cao đẹp của dân tộc Việt Nam.
+                <p class="mt-6 text-base sm:text-xl font-medium text-redcross-100 max-w-3xl mx-auto leading-relaxed">
+                    Cổng tuyên truyền <strong>Luật Hoạt động Chữ thập đỏ 11/2008/QH12</strong> tích hợp Trò chơi Ô chữ & Trắc nghiệm nhận Giấy chứng nhận "Đại sứ Nhân đạo 2026".
                 </p>
 
                 <!-- Hero Action Buttons -->
-                <div class="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4 reveal delay-200">
-                    <a href="#7-linh-vuc" class="w-full sm:w-auto px-8 py-4 bg-white text-redcross-700 hover:bg-slate-100 font-black rounded-2xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1 flex items-center justify-center space-x-2 group">
-                        <i class="fa-solid fa-heart-pulse text-redcross-600 text-lg group-hover:scale-110 transition"></i>
-                        <span>Khám phá 7 Lĩnh vực hoạt động</span>
+                <div class="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <a href="#tro-choi-o-chu" class="w-full sm:w-auto px-8 py-4 bg-amber-400 hover:bg-amber-300 text-slate-900 font-black rounded-2xl shadow-xl transition transform hover:-translate-y-1 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-puzzle-piece text-xl"></i>
+                        <span>Tham gia Giải Ô Chữ Ngay</span>
                     </a>
-                    <a href="#lich-su" class="w-full sm:w-auto px-8 py-4 bg-redcross-950/80 hover:bg-redcross-950 text-white font-bold rounded-2xl border border-white/25 backdrop-blur-sm transition transform hover:-translate-y-1 flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-timeline text-amber-300"></i>
-                        <span>Xem Lịch sử hình thành</span>
+                    <a href="#tro-choi-trac-nghiem" class="w-full sm:w-auto px-8 py-4 bg-youthblue-500 hover:bg-youthblue-600 text-white font-black rounded-2xl shadow-xl transition transform hover:-translate-y-1 flex items-center justify-center space-x-2 border border-white/20">
+                        <i class="fa-solid fa-bolt text-amber-300 text-xl"></i>
+                        <span>Thử Thách Trắc Nghiệm</span>
                     </a>
                 </div>
+            </div>
+        </section>
 
-                <!-- Quick Key Metrics Grid -->
-                <div class="mt-14 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto text-center pt-8 border-t border-white/20 reveal delay-300">
-                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15 hover:bg-white/15 transition duration-300">
-                        <div class="text-2xl sm:text-3xl font-black text-amber-300">23/11/1946</div>
-                        <div class="text-xs text-redcross-100 mt-1 font-semibold">Ngày thành lập Hội</div>
+        <!-- SECTION GAME 1: GIẢI Ô CHỮ "HÀNH TRÌNH NHÂN ĐẠO" -->
+        <section id="tro-choi-o-chu" class="py-16 bg-amber-50/60 border-b border-amber-200/60">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10 reveal">
+                    <span class="text-xs font-black text-amber-800 bg-amber-200/80 px-3.5 py-1.5 rounded-full uppercase tracking-widest">Trò chơi Tương tác 1</span>
+                    <h2 class="mt-3 text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">Giải Ô Chữ "Hành Trình Nhân Đạo"</h2>
+                    <p class="text-sm text-slate-600 mt-2 max-w-2xl mx-auto">Điền chính xác các từ hàng ngang để tìm ra từ khóa hàng dọc ẩn giấu mang thông điệp cốt lõi của Hội!</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    
+                    <!-- Crossword Grid Area (Left / Top) -->
+                    <div class="lg:col-span-7 bg-white p-4 sm:p-7 rounded-3xl shadow-lg border border-amber-200/80 flex flex-col items-center">
+                        <!-- Top Game Status Bar -->
+                        <div class="w-full flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
+                            <div class="flex items-center space-x-2 text-slate-700 font-extrabold text-sm">
+                                <i class="fa-solid fa-stopwatch text-redcross-600 text-lg"></i>
+                                <span>Thời gian: <span id="cw-timer" class="text-redcross-600 font-mono text-lg">00:00</span></span>
+                            </div>
+                            <div class="text-xs font-bold bg-amber-100 text-amber-900 px-3 py-1.5 rounded-xl">
+                                Từ khóa: <span id="cw-progress" class="font-extrabold">0/7</span> hàng ngang
+                            </div>
+                        </div>
+
+                        <!-- Render Crossword Grid -->
+                        <div id="crossword-grid-container" class="overflow-x-auto w-full flex flex-col items-center py-2 space-y-2">
+                            <!-- Injected dynamically via JS -->
+                        </div>
+
+                        <!-- Game Buttons Bar -->
+                        <div class="w-full flex flex-wrap gap-3 justify-center mt-8 pt-4 border-t border-slate-100">
+                            <button onclick="checkCrosswordAnswers()" class="px-6 py-3 bg-redcross-600 hover:bg-redcross-700 text-white font-extrabold text-sm rounded-2xl shadow-md transition flex items-center gap-2">
+                                <i class="fa-solid fa-check"></i>
+                                <span>Kiểm tra Đáp án</span>
+                            </button>
+                            <button onclick="giveCrosswordHint()" class="px-5 py-3 bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-sm rounded-2xl shadow-md transition flex items-center gap-2">
+                                <i class="fa-solid fa-lightbulb"></i>
+                                <span>Gợi ý (+1 ô)</span>
+                            </button>
+                            <button onclick="resetCrossword()" class="px-5 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-extrabold text-sm rounded-2xl transition flex items-center gap-2">
+                                <i class="fa-solid fa-arrow-rotate-left"></i>
+                                <span>Làm lại</span>
+                            </button>
+                        </div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15 hover:bg-white/15 transition duration-300">
-                        <div class="text-2xl sm:text-3xl font-black text-amber-300">7 Lĩnh vực</div>
-                        <div class="text-xs text-redcross-100 mt-1 font-semibold">Hoạt động cốt lõi</div>
+
+                    <!-- Clues List (Right / Bottom) -->
+                    <div class="lg:col-span-5 bg-white p-5 sm:p-7 rounded-3xl shadow-lg border border-amber-200/80">
+                        <h3 class="text-lg font-black text-slate-900 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-list-ol text-amber-500"></i>
+                            <span>Gợi ý Từ Hàng Ngang</span>
+                        </h3>
+                        <div id="cw-clues-list" class="space-y-3 max-h-[480px] overflow-y-auto pr-1 text-xs sm:text-sm">
+                            <!-- Injected dynamically via JS -->
+                        </div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15 hover:bg-white/15 transition duration-300">
-                        <div class="text-2xl sm:text-3xl font-black text-amber-300">Luật 11/2008</div>
-                        <div class="text-xs text-redcross-100 mt-1 font-semibold">Căn cứ pháp lý</div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION GAME 2: THỬ THÁCH TRẮC NGHIỆM "ĐẤU TRÍ NHÂN ĐẠO" -->
+        <section id="tro-choi-trac-nghiem" class="py-16 bg-slate-900 text-white relative overflow-hidden">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center mb-10 reveal">
+                    <span class="text-xs font-black text-youthblue-500 bg-youthblue-500/20 px-3.5 py-1.5 rounded-full uppercase tracking-widest border border-youthblue-500/30">Trò chơi Tương tác 2</span>
+                    <h2 class="mt-3 text-3xl sm:text-4xl font-black tracking-tight">Đấu Trí "Chiến Sĩ Nhân Đạo"</h2>
+                    <p class="text-sm text-slate-400 mt-2">Trả lời chính xác các câu hỏi trắc nghiệm dưới áp lực thời gian để nhận Huy hiệu danh dự!</p>
+                </div>
+
+                <!-- Quiz Main Container -->
+                <div class="bg-slate-800/90 border border-slate-700/80 rounded-3xl p-6 sm:p-10 shadow-2xl backdrop-blur-md">
+                    
+                    <!-- Start Quiz View -->
+                    <div id="quiz-start-view" class="text-center py-6">
+                        <div class="w-20 h-20 bg-youthblue-500/20 text-youthblue-500 border border-youthblue-500/40 rounded-3xl flex items-center justify-center mx-auto mb-6 text-3xl shadow-lg">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <h3 class="text-2xl font-black mb-3">Thử Thách Kiến Thức Chữ Thập Đỏ</h3>
+                        <p class="text-slate-300 text-sm max-w-md mx-auto mb-8 leading-relaxed">Bộ 6 câu hỏi kiến thức về Luật Chữ thập đỏ 2008 và Lịch sử 80 năm. Mỗi câu có **15 giây** để chọn đáp án!</p>
+                        <button onclick="startQuiz()" class="px-8 py-4 bg-youthblue-500 hover:bg-youthblue-600 text-white font-black rounded-2xl shadow-xl transition transform hover:scale-105">
+                            Bắt đầu Đấu trí Ngay <i class="fa-solid fa-play ml-2"></i>
+                        </button>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15 hover:bg-white/15 transition duration-300">
-                        <div class="text-2xl sm:text-3xl font-black text-amber-300">100%</div>
-                        <div class="text-xs text-redcross-100 mt-1 font-semibold">Tự nguyện & Nhân đạo</div>
+
+                    <!-- Active Quiz View -->
+                    <div id="quiz-active-view" class="hidden">
+                        <!-- Progress & Timer Bar -->
+                        <div class="flex justify-between items-center mb-4 text-xs font-bold text-slate-400">
+                            <span>Câu <span id="quiz-current-num" class="text-white text-base">1</span>/6</span>
+                            <span class="flex items-center gap-1.5 text-amber-400">
+                                <i class="fa-solid fa-fire"></i> Chuỗi: <span id="quiz-streak">0</span>
+                            </span>
+                            <span class="text-slate-300"><i class="fa-solid fa-clock mr-1"></i><span id="quiz-time-left" class="text-amber-400 font-mono text-base">15</span>s</span>
+                        </div>
+                        
+                        <!-- Time Progress Line -->
+                        <div class="w-full bg-slate-700 h-2 rounded-full mb-8 overflow-hidden">
+                            <div id="quiz-timer-bar" class="bg-amber-400 h-full w-full transition-all duration-1000 ease-linear"></div>
+                        </div>
+
+                        <!-- Question Text -->
+                        <h3 id="quiz-question-text" class="text-lg sm:text-xl font-extrabold text-white mb-6 leading-snug">
+                            <!-- Question text injected -->
+                        </h3>
+
+                        <!-- Options Grid -->
+                        <div id="quiz-options-grid" class="grid grid-cols-1 gap-3.5 mb-6">
+                            <!-- Options injected -->
+                        </div>
+
+                        <!-- Explanation Box -->
+                        <div id="quiz-explanation-box" class="hidden p-4 rounded-2xl bg-slate-700/80 border border-slate-600 text-xs sm:text-sm text-slate-200 leading-relaxed mb-6">
+                            <!-- Explanation injected -->
+                        </div>
+
+                        <!-- Next Question Button -->
+                        <button id="quiz-next-btn" onclick="nextQuestion()" class="hidden w-full py-3.5 bg-youthblue-500 hover:bg-youthblue-600 text-white font-extrabold rounded-xl transition text-sm">
+                            Câu tiếp theo <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
                     </div>
+
+                    <!-- Quiz Results View -->
+                    <div id="quiz-results-view" class="hidden text-center py-6">
+                        <div class="w-24 h-24 bg-amber-400/20 text-amber-400 border border-amber-400/40 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">
+                            <i id="quiz-badge-icon" class="fa-solid fa-award"></i>
+                        </div>
+                        <span id="quiz-badge-title" class="text-xs font-black uppercase tracking-widest text-amber-400 bg-amber-400/10 px-3 py-1 rounded-full border border-amber-400/20">Danh hiệu</span>
+                        <h3 id="quiz-final-rank" class="text-2xl sm:text-3xl font-black text-white mt-2 mb-2">Đại sứ Chữ Thập Đỏ</h3>
+                        <p class="text-sm text-slate-300 mb-6">Bạn đã đạt <span id="quiz-final-score" class="text-amber-400 font-extrabold text-lg">0</span> điểm (<span id="quiz-correct-count">0</span>/6 câu đúng)</p>
+
+                        <div class="flex flex-wrap justify-center gap-3">
+                            <button onclick="openCertificateModal()" class="px-6 py-3.5 bg-redcross-600 hover:bg-redcross-700 text-white font-extrabold rounded-2xl shadow-lg transition flex items-center gap-2">
+                                <i class="fa-solid fa-certificate"></i>
+                                <span>Nhận Bằng Chứng Nhận</span>
+                            </button>
+                            <button onclick="startQuiz()" class="px-6 py-3.5 bg-slate-700 hover:bg-slate-600 text-white font-extrabold rounded-2xl transition">
+                                Chơi lại <i class="fa-solid fa-rotate-right ml-1"></i>
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -250,904 +362,640 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    
-                    <!-- Lĩnh vực 1 -->
-                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between card-hover hover:shadow-2xl transition-all duration-300 reveal delay-100">
+                    <!-- Cards -->
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between hover:shadow-2xl transition-all duration-300 reveal">
                         <div>
                             <div class="relative h-52 w-full overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop" 
-                                     alt="Cứu trợ khẩn cấp và trợ giúp nhân đạo" 
-                                     class="w-full h-full object-cover card-img-zoom"
-                                     onerror="this.src='https://placehold.co/600x400/ef4444/ffffff?text=Cuu+Tro+Khan+Cap'">
-                                <div class="absolute top-3 left-3 bg-redcross-600 text-white text-xs font-black px-3 py-1 rounded-xl shadow-md">
-                                    Điều 7
-                                </div>
+                                <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop" alt="Cứu trợ khẩn cấp" class="w-full h-full object-cover">
+                                <div class="absolute top-3 left-3 bg-redcross-600 text-white text-xs font-black px-3 py-1 rounded-xl">Điều 7</div>
                             </div>
-                            <div class="p-6 sm:p-7">
-                                <div class="flex items-center space-x-2 text-redcross-600 font-extrabold text-xs uppercase mb-2">
-                                    <i class="fa-solid fa-hand-holding-heart"></i>
-                                    <span>Lĩnh vực 1</span>
-                                </div>
-                                <h3 class="text-xl font-black text-slate-900 mb-2 leading-snug">Cứu trợ khẩn cấp & Trợ giúp nhân đạo</h3>
-                                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                                    Hỗ trợ kịp thời tiền, hiện vật, tâm lý cho nạn nhân thiên tai, dịch bệnh, hỏa hoạn, tai nạn giao thông; trợ giúp kinh phí học nghề, khám chữa bệnh cho người nghèo, người khuyết tật, trẻ mồ côi.
-                                </p>
+                            <div class="p-6">
+                                <h3 class="text-xl font-black text-slate-900 mb-2">Cứu trợ khẩn cấp & Trợ giúp nhân đạo</h3>
+                                <p class="text-xs sm:text-sm text-slate-600">Hỗ trợ kịp thời tiền, hiện vật, tâm lý cho nạn nhân thiên tai, dịch bệnh, tai nạn; trợ giúp kinh phí học nghề, khám chữa bệnh cho người khó khăn.</p>
                             </div>
                         </div>
-                        <div class="p-6 sm:p-7 pt-0">
-                            <button onclick="openModal('modal-d7')" class="w-full py-3 bg-redcross-50 hover:bg-redcross-600 text-redcross-700 hover:text-white font-bold text-xs rounded-2xl transition duration-200 flex items-center justify-center space-x-2">
-                                <span>Chi tiết Điều 7</span>
-                                <i class="fa-solid fa-arrow-right text-xs"></i>
-                            </button>
+                        <div class="p-6 pt-0">
+                            <button onclick="openModal('modal-d7')" class="w-full py-3 bg-redcross-50 hover:bg-redcross-600 text-redcross-700 hover:text-white font-bold text-xs rounded-2xl transition">Chi tiết Điều 7 <i class="fa-solid fa-arrow-right ml-1"></i></button>
                         </div>
                     </div>
 
-                    <!-- Lĩnh vực 2 -->
-                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between card-hover hover:shadow-2xl transition-all duration-300 reveal delay-200">
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between hover:shadow-2xl transition-all duration-300 reveal">
                         <div>
                             <div class="relative h-52 w-full overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800&auto=format&fit=crop" 
-                                     alt="Chăm sóc sức khỏe cộng đồng" 
-                                     class="w-full h-full object-cover card-img-zoom"
-                                     onerror="this.src='https://placehold.co/600x400/ef4444/ffffff?text=Cham+Soc+Suc+Khoe'">
-                                <div class="absolute top-3 left-3 bg-blue-600 text-white text-xs font-black px-3 py-1 rounded-xl shadow-md">
-                                    Điều 8
-                                </div>
+                                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800&auto=format&fit=crop" alt="Chăm sóc sức khỏe" class="w-full h-full object-cover">
+                                <div class="absolute top-3 left-3 bg-blue-600 text-white text-xs font-black px-3 py-1 rounded-xl">Điều 8</div>
                             </div>
-                            <div class="p-6 sm:p-7">
-                                <div class="flex items-center space-x-2 text-blue-600 font-extrabold text-xs uppercase mb-2">
-                                    <i class="fa-solid fa-user-doctor"></i>
-                                    <span>Lĩnh vực 2</span>
-                                </div>
-                                <h3 class="text-xl font-black text-slate-900 mb-2 leading-snug">Chăm sóc sức khỏe cộng đồng</h3>
-                                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                                    Tuyên truyền kiến thức y tế phòng dịch, hướng dẫn nhân dân tự chăm sóc sức khỏe, đào tạo lực lượng tình nguyện viên y tế và tổ chức các đoàn khám chữa bệnh nhân đạo lưu động.
-                                </p>
+                            <div class="p-6">
+                                <h3 class="text-xl font-black text-slate-900 mb-2">Chăm sóc sức khỏe cộng đồng</h3>
+                                <p class="text-xs sm:text-sm text-slate-600">Tuyên truyền kiến thức y tế phòng dịch, hướng dẫn nhân dân tự chăm sóc sức khỏe và tổ chức các đoàn khám chữa bệnh nhân đạo lưu động.</p>
                             </div>
                         </div>
-                        <div class="p-6 sm:p-7 pt-0">
-                            <button onclick="openModal('modal-d8')" class="w-full py-3 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white font-bold text-xs rounded-2xl transition duration-200 flex items-center justify-center space-x-2">
-                                <span>Chi tiết Điều 8</span>
-                                <i class="fa-solid fa-arrow-right text-xs"></i>
-                            </button>
+                        <div class="p-6 pt-0">
+                            <button onclick="openModal('modal-d8')" class="w-full py-3 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white font-bold text-xs rounded-2xl transition">Chi tiết Điều 8 <i class="fa-solid fa-arrow-right ml-1"></i></button>
                         </div>
                     </div>
 
-                    <!-- Lĩnh vực 3 -->
-                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between card-hover hover:shadow-2xl transition-all duration-300 reveal delay-300">
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between hover:shadow-2xl transition-all duration-300 reveal">
                         <div>
                             <div class="relative h-52 w-full overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1603398938378-e54eab446dde?q=80&w=800&auto=format&fit=crop" 
-                                     alt="Sơ cấp cứu ban đầu" 
-                                     class="w-full h-full object-cover card-img-zoom"
-                                     onerror="this.src='https://placehold.co/600x400/ef4444/ffffff?text=So+Cap+Cuu'">
-                                <div class="absolute top-3 left-3 bg-emerald-600 text-white text-xs font-black px-3 py-1 rounded-xl shadow-md">
-                                    Điều 9
-                                </div>
+                                <img src="https://images.unsplash.com/photo-1603398938378-e54eab446dde?q=80&w=800&auto=format&fit=crop" alt="Sơ cấp cứu" class="w-full h-full object-cover">
+                                <div class="absolute top-3 left-3 bg-emerald-600 text-white text-xs font-black px-3 py-1 rounded-xl">Điều 9</div>
                             </div>
-                            <div class="p-6 sm:p-7">
-                                <div class="flex items-center space-x-2 text-emerald-600 font-extrabold text-xs uppercase mb-2">
-                                    <i class="fa-solid fa-kit-medical"></i>
-                                    <span>Lĩnh vực 3</span>
-                                </div>
-                                <h3 class="text-xl font-black text-slate-900 mb-2 leading-snug">Sơ cấp cứu ban đầu</h3>
-                                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                                    Thực hiện sơ cấp cứu tại chỗ cho nạn nhân tai nạn giao thông, thảm họa, thiên tai; tổ chức điểm/trạm sơ cấp cứu trên các tuyến giao thông trọng điểm và huấn luyện kỹ năng sơ cứu cho cộng đồng.
-                                </p>
+                            <div class="p-6">
+                                <h3 class="text-xl font-black text-slate-900 mb-2">Sơ cấp cứu ban đầu</h3>
+                                <p class="text-xs sm:text-sm text-slate-600">Thực hiện sơ cấp cứu tại chỗ cho nạn nhân tai nạn giao thông, thảm họa, thiên tai; tổ chức điểm/trạm sơ cấp cứu và huấn luyện kỹ năng.</p>
                             </div>
                         </div>
-                        <div class="p-6 sm:p-7 pt-0">
-                            <button onclick="openModal('modal-d9')" class="w-full py-3 bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white font-bold text-xs rounded-2xl transition duration-200 flex items-center justify-center space-x-2">
-                                <span>Chi tiết Điều 9</span>
-                                <i class="fa-solid fa-arrow-right text-xs"></i>
-                            </button>
+                        <div class="p-6 pt-0">
+                            <button onclick="openModal('modal-d9')" class="w-full py-3 bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white font-bold text-xs rounded-2xl transition">Chi tiết Điều 9 <i class="fa-solid fa-arrow-right ml-1"></i></button>
                         </div>
                     </div>
 
-                    <!-- Lĩnh vực 4 -->
-                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between card-hover hover:shadow-2xl transition-all duration-300 reveal delay-100">
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between hover:shadow-2xl transition-all duration-300 reveal">
                         <div>
                             <div class="relative h-52 w-full overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1615461066841-6116e61058f4?q=80&w=800&auto=format&fit=crop" 
-                                     alt="Hiến máu nhân đạo" 
-                                     class="w-full h-full object-cover card-img-zoom"
-                                     onerror="this.src='https://placehold.co/600x400/ef4444/ffffff?text=Hien+Mau+Nhan+Dao'">
-                                <div class="absolute top-3 left-3 bg-rose-600 text-white text-xs font-black px-3 py-1 rounded-xl shadow-md">
-                                    Điều 10
-                                </div>
+                                <img src="https://images.unsplash.com/photo-1615461066841-6116e61058f4?q=80&w=800&auto=format&fit=crop" alt="Hiến máu nhân đạo" class="w-full h-full object-cover">
+                                <div class="absolute top-3 left-3 bg-rose-600 text-white text-xs font-black px-3 py-1 rounded-xl">Điều 10</div>
                             </div>
-                            <div class="p-6 sm:p-7">
-                                <div class="flex items-center space-x-2 text-rose-600 font-extrabold text-xs uppercase mb-2">
-                                    <i class="fa-solid fa-droplet"></i>
-                                    <span>Lĩnh vực 4</span>
-                                </div>
-                                <h3 class="text-xl font-black text-slate-900 mb-2 leading-snug">Hiến máu, mô, tạng & hiến xác</h3>
-                                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                                    Tuyên truyền, vận động và tổ chức các chiến dịch hiến máu tình nguyện đáp ứng nguồn máu chữa bệnh; tuyên truyền ý nghĩa nhân văn cao đẹp của việc đăng ký hiến mô, tạng và hiến xác cho y học.
-                                </p>
+                            <div class="p-6">
+                                <h3 class="text-xl font-black text-slate-900 mb-2">Hiến máu, mô, tạng & hiến xác</h3>
+                                <p class="text-xs sm:text-sm text-slate-600">Tuyên truyền, vận động và tổ chức hiến máu tình nguyện; tuyên truyền ý nghĩa nhân văn cao đẹp của việc đăng ký hiến mô, tạng và hiến xác cho y học.</p>
                             </div>
                         </div>
-                        <div class="p-6 sm:p-7 pt-0">
-                            <button onclick="openModal('modal-d10')" class="w-full py-3 bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white font-bold text-xs rounded-2xl transition duration-200 flex items-center justify-center space-x-2">
-                                <span>Chi tiết Điều 10</span>
-                                <i class="fa-solid fa-arrow-right text-xs"></i>
-                            </button>
+                        <div class="p-6 pt-0">
+                            <button onclick="openModal('modal-d10')" class="w-full py-3 bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white font-bold text-xs rounded-2xl transition">Chi tiết Điều 10 <i class="fa-solid fa-arrow-right ml-1"></i></button>
                         </div>
                     </div>
 
-                    <!-- Lĩnh vực 5 -->
-                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between card-hover hover:shadow-2xl transition-all duration-300 reveal delay-200">
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between hover:shadow-2xl transition-all duration-300 reveal">
                         <div>
                             <div class="relative h-52 w-full overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=800&auto=format&fit=crop" 
-                                     alt="Tìm kiếm tin tức thân nhân thất lạc" 
-                                     class="w-full h-full object-cover card-img-zoom"
-                                     onerror="this.src='https://placehold.co/600x400/ef4444/ffffff?text=Tim+Kiem+Than+Nhan'">
-                                <div class="absolute top-3 left-3 bg-amber-600 text-white text-xs font-black px-3 py-1 rounded-xl shadow-md">
-                                    Điều 11
-                                </div>
+                                <img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=800&auto=format&fit=crop" alt="Tìm kiếm thân nhân" class="w-full h-full object-cover">
+                                <div class="absolute top-3 left-3 bg-amber-600 text-white text-xs font-black px-3 py-1 rounded-xl">Điều 11</div>
                             </div>
-                            <div class="p-6 sm:p-7">
-                                <div class="flex items-center space-x-2 text-amber-600 font-extrabold text-xs uppercase mb-2">
-                                    <i class="fa-solid fa-people-roof"></i>
-                                    <span>Lĩnh vực 5</span>
-                                </div>
-                                <h3 class="text-xl font-black text-slate-900 mb-2 leading-snug">Tìm kiếm tin tức thân nhân thất lạc</h3>
-                                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                                    Thu thập, xử lý thông tin, hỗ trợ trao đổi thông tin liên lạc và hướng dẫn thủ tục giúp các gia đình thất lạc do chiến tranh, thiên tai, thảm họa sớm tìm lại người thân và đoàn tụ.
-                                </p>
+                            <div class="p-6">
+                                <h3 class="text-xl font-black text-slate-900 mb-2">Tìm kiếm tin tức thân nhân thất lạc</h3>
+                                <p class="text-xs sm:text-sm text-slate-600">Thu thập, xử lý thông tin, hỗ trợ trao đổi thông tin liên lạc và hướng dẫn thủ tục giúp các gia đình thất lạc sớm đoàn tụ.</p>
                             </div>
                         </div>
-                        <div class="p-6 sm:p-7 pt-0">
-                            <button onclick="openModal('modal-d11')" class="w-full py-3 bg-amber-50 hover:bg-amber-600 text-amber-700 hover:text-white font-bold text-xs rounded-2xl transition duration-200 flex items-center justify-center space-x-2">
-                                <span>Chi tiết Điều 11</span>
-                                <i class="fa-solid fa-arrow-right text-xs"></i>
-                            </button>
+                        <div class="p-6 pt-0">
+                            <button onclick="openModal('modal-d11')" class="w-full py-3 bg-amber-50 hover:bg-amber-600 text-amber-700 hover:text-white font-bold text-xs rounded-2xl transition">Chi tiết Điều 11 <i class="fa-solid fa-arrow-right ml-1"></i></button>
                         </div>
                     </div>
 
-                    <!-- Lĩnh vực 6 -->
-                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between card-hover hover:shadow-2xl transition-all duration-300 reveal delay-300">
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between hover:shadow-2xl transition-all duration-300 reveal">
                         <div>
                             <div class="relative h-52 w-full overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=800&auto=format&fit=crop" 
-                                     alt="Tuyên truyền các giá trị nhân đạo" 
-                                     class="w-full h-full object-cover card-img-zoom"
-                                     onerror="this.src='https://placehold.co/600x400/ef4444/ffffff?text=Gia+Tri+Nhan+Dao'">
-                                <div class="absolute top-3 left-3 bg-indigo-600 text-white text-xs font-black px-3 py-1 rounded-xl shadow-md">
-                                    Điều 12
-                                </div>
+                                <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=800&auto=format&fit=crop" alt="Tuyên truyền giá trị nhân đạo" class="w-full h-full object-cover">
+                                <div class="absolute top-3 left-3 bg-indigo-600 text-white text-xs font-black px-3 py-1 rounded-xl">Điều 12</div>
                             </div>
-                            <div class="p-6 sm:p-7">
-                                <div class="flex items-center space-x-2 text-indigo-600 font-extrabold text-xs uppercase mb-2">
-                                    <i class="fa-solid fa-bullhorn"></i>
-                                    <span>Lĩnh vực 6</span>
-                                </div>
-                                <h3 class="text-xl font-black text-slate-900 mb-2 leading-snug">Tuyên truyền các giá trị nhân đạo</h3>
-                                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                                    Nâng cao nhận thức về truyền thống nhân ái thương người của dân tộc Việt Nam; phổ biến chính sách pháp luật Chữ thập đỏ, Luật Nhân đạo Quốc tế và các nguyên tắc của Phong trào.
-                                </p>
+                            <div class="p-6">
+                                <h3 class="text-xl font-black text-slate-900 mb-2">Tuyên truyền các giá trị nhân đạo</h3>
+                                <p class="text-xs sm:text-sm text-slate-600">Nâng cao nhận thức về truyền thống thương người; phổ biến chính sách pháp luật Chữ thập đỏ, Luật Nhân đạo Quốc tế và các nguyên tắc Phong trào.</p>
                             </div>
                         </div>
-                        <div class="p-6 sm:p-7 pt-0">
-                            <button onclick="openModal('modal-d12')" class="w-full py-3 bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white font-bold text-xs rounded-2xl transition duration-200 flex items-center justify-center space-x-2">
-                                <span>Chi tiết Điều 12</span>
-                                <i class="fa-solid fa-arrow-right text-xs"></i>
-                            </button>
+                        <div class="p-6 pt-0">
+                            <button onclick="openModal('modal-d12')" class="w-full py-3 bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white font-bold text-xs rounded-2xl transition">Chi tiết Điều 12 <i class="fa-solid fa-arrow-right ml-1"></i></button>
                         </div>
                     </div>
-
-                    <!-- Lĩnh vực 7 -->
-                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between card-hover hover:shadow-2xl transition-all duration-300 md:col-span-2 lg:col-span-1 reveal delay-100">
-                        <div>
-                            <div class="relative h-52 w-full overflow-hidden">
-                                <img src="https://images.unsplash.com/photo-1547683905-f686c993aae5?q=80&w=800&auto=format&fit=crop" 
-                                     alt="Phòng ngừa và ứng phó thảm họa" 
-                                     class="w-full h-full object-cover card-img-zoom"
-                                     onerror="this.src='https://placehold.co/600x400/ef4444/ffffff?text=Ung+Pho+Tham+Hoa'">
-                                <div class="absolute top-3 left-3 bg-purple-600 text-white text-xs font-black px-3 py-1 rounded-xl shadow-md">
-                                    Điều 13
-                                </div>
-                            </div>
-                            <div class="p-6 sm:p-7">
-                                <div class="flex items-center space-x-2 text-purple-600 font-extrabold text-xs uppercase mb-2">
-                                    <i class="fa-solid fa-shield-halved"></i>
-                                    <span>Lĩnh vực 7</span>
-                                </div>
-                                <h3 class="text-xl font-black text-slate-900 mb-2 leading-snug">Phòng ngừa & Ứng phó thảm họa</h3>
-                                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                                    Huấn luyện kỹ năng ứng phó bão lũ thiên tai, chuẩn bị lực lượng vật tư cứu hộ, phối hợp sơ tán người dân vùng nguy hiểm và hỗ trợ tái thiết, phục hồi cộng đồng sau thảm họa.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="p-6 sm:p-7 pt-0">
-                            <button onclick="openModal('modal-d13')" class="w-full py-3 bg-purple-50 hover:bg-purple-600 text-purple-700 hover:text-white font-bold text-xs rounded-2xl transition duration-200 flex items-center justify-center space-x-2">
-                                <span>Chi tiết Điều 13</span>
-                                <i class="fa-solid fa-arrow-right text-xs"></i>
-                            </button>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </section>
 
-        <!-- SECTION: TIMELINE LỊCH SỬ HÌNH THÀNH (16 MỐC NỔI BẬT) -->
+        <!-- SECTION: TIMELINE LỊCH SỬ -->
         <section id="lich-su" class="py-20 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-12 reveal">
-                    <span class="text-xs font-black text-redcross-600 uppercase tracking-widest bg-redcross-100 px-3.5 py-1.5 rounded-full border border-redcross-200">Truyền thống 80 năm lịch sử</span>
+                    <span class="text-xs font-black text-redcross-600 uppercase tracking-widest bg-redcross-100 px-3.5 py-1.5 rounded-full border border-redcross-200">Truyền thống 80 năm</span>
                     <h2 class="mt-4 text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">Lịch Sử Hình Thành & Phát Triển</h2>
-                    <p class="text-sm text-slate-600 mt-2 max-w-2xl mx-auto">Từ ngày thành lập 23/11/1946 dưới sự sáng lập và làm Chủ tịch danh dự của Chủ tịch Hồ Chí Minh</p>
-                    <div class="w-20 h-1.5 bg-redcross-600 mx-auto mt-4 rounded-full"></div>
+                    <p class="text-sm text-slate-600 mt-2">Từ mốc son 23/11/1946 dưới sự sáng lập và làm Chủ tịch danh dự của Chủ tịch Hồ Chí Minh</p>
                 </div>
 
-                <!-- Era Filter Buttons -->
-                <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12 reveal delay-100">
-                    <button id="btn-era-all" onclick="filterTimeline('all')" class="era-btn px-5 py-2.5 text-xs font-extrabold rounded-full bg-redcross-600 text-white shadow-md shadow-redcross-600/20 transition duration-200 transform hover:scale-105">
-                        Tất cả các mốc (16)
-                    </button>
-                    <button id="btn-era-1" onclick="filterTimeline('1946-1975')" class="era-btn px-5 py-2.5 text-xs font-extrabold rounded-full bg-white text-slate-700 hover:bg-redcross-50 border border-slate-200 transition duration-200 transform hover:scale-105">
-                        1946 - 1975 (Kháng chiến)
-                    </button>
-                    <button id="btn-era-2" onclick="filterTimeline('1976-2000')" class="era-btn px-5 py-2.5 text-xs font-extrabold rounded-full bg-white text-slate-700 hover:bg-redcross-50 border border-slate-200 transition duration-200 transform hover:scale-105">
-                        1976 - 2000 (Hợp nhất & Đổi mới)
-                    </button>
-                    <button id="btn-era-3" onclick="filterTimeline('2001-now')" class="era-btn px-5 py-2.5 text-xs font-extrabold rounded-full bg-white text-slate-700 hover:bg-redcross-50 border border-slate-200 transition duration-200 transform hover:scale-105">
-                        2001 - Nay (Phát triển toàn diện)
-                    </button>
-                </div>
-
-                <!-- Timeline Container -->
                 <div class="relative">
-                    <!-- Central Vertical Line -->
                     <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-1 bg-redcross-200 rounded-full"></div>
-                    <div class="block md:hidden absolute left-4 top-0 bottom-0 w-1 bg-redcross-200 rounded-full"></div>
-
-                    <div id="timeline-events-container" class="space-y-8 sm:space-y-10">
-                        <!-- Dynamic render via JS -->
+                    <div id="timeline-container" class="space-y-8">
+                        <!-- Rendered by JS -->
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SECTION: NGUYÊN TẮC HOẠT ĐỘNG, BIỂU TƯỢNG & CƠ CẤU PHÁP LÝ -->
-        <section id="nguyen-tac" class="py-20 bg-slate-100">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-14 reveal">
-                    <span class="text-xs font-black text-redcross-600 uppercase tracking-widest bg-redcross-100 px-3.5 py-1.5 rounded-full border border-redcross-200">Pháp chế Chữ thập đỏ</span>
-                    <h2 class="mt-4 text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">Nguyên Tắc, Biểu Tượng & Cấm Vi Phạm</h2>
-                    <div class="w-20 h-1.5 bg-redcross-600 mx-auto mt-4 rounded-full"></div>
-                </div>
-
-                <!-- 5 Gold Principles (Điều 3) -->
-                <div class="mb-14 reveal">
-                    <h3 class="text-xl font-extrabold text-slate-800 mb-6 text-center flex items-center justify-center">
-                        <i class="fa-solid fa-star text-amber-500 mr-2"></i>
-                        <span>5 Nguyên Tắc Hoạt Động Cốt Lõi (Điều 3)</span>
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm text-center transform hover:-translate-y-1 transition duration-200">
-                            <div class="w-12 h-12 bg-redcross-100 text-redcross-600 rounded-2xl flex items-center justify-center font-black text-lg mb-3 mx-auto">1</div>
-                            <h4 class="font-extrabold text-slate-900 text-sm mb-1">Tự nguyện, không vụ lợi</h4>
-                            <p class="text-xs text-slate-600 leading-relaxed">Xuất phát từ tinh thần thương người, không đòi hỏi trả chi phí.</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm text-center transform hover:-translate-y-1 transition duration-200">
-                            <div class="w-12 h-12 bg-redcross-100 text-redcross-600 rounded-2xl flex items-center justify-center font-black text-lg mb-3 mx-auto">2</div>
-                            <h4 class="font-extrabold text-slate-900 text-sm mb-1">Công khai, minh bạch</h4>
-                            <p class="text-xs text-slate-600 leading-relaxed">Sử dụng đúng mục đích, đúng đối tượng; kịp thời và đạt hiệu quả cao.</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm text-center transform hover:-translate-y-1 transition duration-200">
-                            <div class="w-12 h-12 bg-redcross-100 text-redcross-600 rounded-2xl flex items-center justify-center font-black text-lg mb-3 mx-auto">3</div>
-                            <h4 class="font-extrabold text-slate-900 text-sm mb-1">Không phân biệt đối xử</h4>
-                            <p class="text-xs text-slate-600 leading-relaxed">Cứu trợ dựa trên mức độ khó khăn, phù hợp truyền thống nhân ái.</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm text-center transform hover:-translate-y-1 transition duration-200">
-                            <div class="w-12 h-12 bg-redcross-100 text-redcross-600 rounded-2xl flex items-center justify-center font-black text-lg mb-3 mx-auto">4</div>
-                            <h4 class="font-extrabold text-slate-900 text-sm mb-1">Sử dụng đúng biểu tượng</h4>
-                            <p class="text-xs text-slate-600 leading-relaxed">Tôn trọng và sử dụng đúng quy định biểu tượng Chữ thập đỏ.</p>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm text-center transform hover:-translate-y-1 transition duration-200">
-                            <div class="w-12 h-12 bg-redcross-100 text-redcross-600 rounded-2xl flex items-center justify-center font-black text-lg mb-3 mx-auto">5</div>
-                            <h4 class="font-extrabold text-slate-900 text-sm mb-1">Tuân thủ Pháp luật</h4>
-                            <p class="text-xs text-slate-600 leading-relaxed">Tuân thủ quy định pháp luật Việt Nam và Điều ước quốc tế.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3 Protected Emblems (Điều 14 - 16) -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14 reveal">
-                    <div class="bg-white p-7 rounded-3xl border border-slate-200/80 shadow-sm text-center hover:shadow-xl transition duration-300">
-                        <div class="w-20 h-20 bg-slate-50 border border-slate-200/80 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-inner">
-                            <svg class="w-14 h-14" viewBox="0 0 100 100">
-                                <rect x="35" y="10" width="30" height="80" fill="#da251c" />
-                                <rect x="10" y="35" width="80" height="30" fill="#da251c" />
-                            </svg>
-                        </div>
-                        <span class="text-xs font-black text-redcross-600 bg-redcross-50 px-3 py-1 rounded-full">Điều 14 & 15</span>
-                        <h4 class="text-lg font-black text-slate-900 mt-2 mb-1">Biểu tượng Chữ thập đỏ</h4>
-                        <p class="text-xs text-slate-600 leading-relaxed">Hình chữ thập màu đỏ trên nền trắng. Là dấu hiệu nhận biết và bảo hộ người, cơ sở, phương tiện thực hiện hoạt động chữ thập đỏ.</p>
-                    </div>
-
-                    <div class="bg-white p-7 rounded-3xl border border-slate-200/80 shadow-sm text-center hover:shadow-xl transition duration-300">
-                        <div class="w-20 h-20 bg-slate-50 border border-slate-200/80 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-inner">
-                            <svg class="w-14 h-14" viewBox="0 0 100 100">
-                                <path d="M 65 15 A 35 35 0 1 0 65 85 A 28 28 0 1 1 65 15 Z" fill="#da251c" />
-                            </svg>
-                        </div>
-                        <span class="text-xs font-black text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Điều 16</span>
-                        <h4 class="text-lg font-black text-slate-900 mt-2 mb-1">Trăng lưỡi liềm đỏ</h4>
-                        <p class="text-xs text-slate-600 leading-relaxed">Biểu tượng quốc tế do các tổ chức thuộc Phong trào sử dụng tại các quốc gia Hồi giáo, được pháp luật Việt Nam tôn trọng bảo hộ.</p>
-                    </div>
-
-                    <div class="bg-white p-7 rounded-3xl border border-slate-200/80 shadow-sm text-center hover:shadow-xl transition duration-300">
-                        <div class="w-20 h-20 bg-slate-50 border border-slate-200/80 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-inner">
-                            <svg class="w-14 h-14" viewBox="0 0 100 100">
-                                <polygon points="50,10 90,50 50,90 10,50" fill="none" stroke="#da251c" stroke-width="12" />
-                            </svg>
-                        </div>
-                        <span class="text-xs font-black text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Điều 16</span>
-                        <h4 class="text-lg font-black text-slate-900 mt-2 mb-1">Pha lê đỏ</h4>
-                        <p class="text-xs text-slate-600 leading-relaxed">Biểu tượng bổ sung trung lập quốc tế của Phong trào Chữ thập đỏ và Trăng lưỡi liềm đỏ Quốc tế, được pháp luật bảo vệ.</p>
-                    </div>
-                </div>
-
-                <!-- Các hành vi bị nghiêm cấm (Điều 6) -->
-                <div class="bg-red-50/90 border border-red-200/80 rounded-3xl p-6 sm:p-8 reveal shadow-sm">
-                    <h3 class="text-lg font-black text-redcross-800 mb-4 flex items-center">
-                        <i class="fa-solid fa-ban text-redcross-600 mr-2.5 text-xl"></i>
-                        <span>Các hành vi bị nghiêm cấm theo Điều 6 Luật Chữ thập đỏ</span>
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs sm:text-sm text-slate-700">
-                        <div class="bg-white p-3.5 rounded-2xl border border-red-100 flex items-start space-x-2.5 shadow-xs">
-                            <span class="font-extrabold text-redcross-600 shrink-0">1.</span>
-                            <span>Cản trở hoặc ép buộc tổ chức, cá nhân tham gia hoạt động chữ thập đỏ.</span>
-                        </div>
-                        <div class="bg-white p-3.5 rounded-2xl border border-red-100 flex items-start space-x-2.5 shadow-xs">
-                            <span class="font-extrabold text-redcross-600 shrink-0">2.</span>
-                            <span>Cung cấp hàng hóa, dịch vụ không bảo đảm chất lượng gây tổn hại sức khỏe, tính mạng.</span>
-                        </div>
-                        <div class="bg-white p-3.5 rounded-2xl border border-red-100 flex items-start space-x-2.5 shadow-xs">
-                            <span class="font-extrabold text-redcross-600 shrink-0">3.</span>
-                            <span>Báo cáo sai sự thật, gian lận, chiếm đoạt, sử dụng trái phép tiền hiện vật tài trợ.</span>
-                        </div>
-                        <div class="bg-white p-3.5 rounded-2xl border border-red-100 flex items-start space-x-2.5 shadow-xs">
-                            <span class="font-extrabold text-redcross-600 shrink-0">4.</span>
-                            <span>Lợi dụng hoạt động chữ thập đỏ nhằm xâm phạm an ninh quốc gia, trật tự xã hội.</span>
-                        </div>
-                        <div class="bg-white p-3.5 rounded-2xl border border-red-100 flex items-start space-x-2.5 shadow-xs">
-                            <span class="font-extrabold text-redcross-600 shrink-0">5.</span>
-                            <span>Lợi dụng hoạt động chữ thập đỏ để vụ lợi.</span>
-                        </div>
-                        <div class="bg-white p-3.5 rounded-2xl border border-red-100 flex items-start space-x-2.5 shadow-xs">
-                            <span class="font-extrabold text-redcross-600 shrink-0">6.</span>
-                            <span>Yêu cầu người được cứu trợ trả chi phí tiếp nhận, vận chuyển, phân phối hiện vật.</span>
-                        </div>
-                        <div class="bg-white p-3.5 rounded-2xl border border-red-100 flex items-start space-x-2.5 shadow-xs md:col-span-2">
-                            <span class="font-extrabold text-redcross-600 shrink-0">7.</span>
-                            <span>Sử dụng biểu tượng chữ thập đỏ trái pháp luật.</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION: TRA CỨU ĐIỀU LUẬT NHANH -->
-        <section id="tra-cuu" class="py-20 bg-white">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- SECTION: TRA CỨU ĐIỀU LUẬT -->
+        <section id="tra-cuu" class="py-20 bg-slate-100">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-10 reveal">
-                    <span class="text-xs font-black text-redcross-600 uppercase tracking-widest bg-redcross-100 px-3.5 py-1.5 rounded-full border border-redcross-200">Tra cứu văn bản pháp luật</span>
-                    <h2 class="mt-4 text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">Tra Cứu Nội Dung Luật Chữ Thập Đỏ</h2>
-                    <p class="text-sm text-slate-500 mt-1">Nhập từ khóa tìm kiếm (Ví dụ: "cứu trợ", "hiến máu", "biểu tượng", "minh bạch")...</p>
+                    <span class="text-xs font-black text-redcross-600 uppercase tracking-widest bg-redcross-100 px-3.5 py-1.5 rounded-full">Pháp chế Chữ thập đỏ</span>
+                    <h2 class="mt-3 text-3xl font-black text-slate-900">Tra Cứu Luật Hoạt Động Chữ Thập Đỏ 2008</h2>
                 </div>
 
-                <div class="max-w-2xl mx-auto relative mb-8 reveal delay-100">
-                    <input type="text" id="law-search-input" onkeyup="filterLaws()" placeholder="Nhập từ khóa tìm kiếm nội dung các điều luật..." class="w-full pl-12 pr-4 py-4 border border-slate-300 rounded-2xl shadow-sm focus:ring-2 focus:ring-redcross-500 focus:border-redcross-500 text-sm transition">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4.5 top-4.5 text-slate-400 text-base"></i>
+                <div class="relative mb-8 max-w-xl mx-auto">
+                    <input type="text" id="law-search-input" onkeyup="filterLaws()" placeholder="Nhập từ khóa (Ví dụ: hiến máu, cứu trợ, biểu tượng)..." class="w-full pl-12 pr-4 py-3.5 border border-slate-300 rounded-2xl shadow-sm focus:ring-2 focus:ring-redcross-500 text-sm">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4.5 top-4 text-slate-400"></i>
                 </div>
 
-                <!-- Results Container -->
-                <div id="law-results" class="max-w-4xl mx-auto space-y-3.5 max-h-96 overflow-y-auto pr-2 reveal delay-200">
-                    <!-- Rendered by JavaScript -->
+                <div id="law-results" class="space-y-3.5 max-h-96 overflow-y-auto pr-1">
+                    <!-- Rendered by JS -->
                 </div>
             </div>
         </section>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-300 pt-14 pb-8 border-t border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-                <!-- Col 1 -->
-                <div>
-                    <div class="flex items-center space-x-3 mb-4">
-                        <div class="w-10 h-10 bg-redcross-600 rounded-2xl flex items-center justify-center text-white shadow-md">
-                            <div class="relative w-5 h-5 flex items-center justify-center">
-                                <div class="absolute w-4 h-1 bg-white rounded-xs"></div>
-                                <div class="absolute w-1 h-4 bg-white rounded-xs"></div>
-                            </div>
-                        </div>
-                        <span class="font-black text-white text-base">HỘI CHỮ THẬP ĐỎ VIỆT NAM</span>
-                    </div>
-                    <p class="text-xs text-slate-400 leading-relaxed">
-                        Cổng thông tin truyền thông tuyên truyền Luật Hoạt động Chữ thập đỏ (Luật số: 11/2008/QH12 do Quốc hội khóa XII thông qua) và tôn vinh 80 năm lịch sử hình thành phát triển Hội.
-                    </p>
-                </div>
-
-                <!-- Col 2 -->
-                <div>
-                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4">Cơ sở Pháp lý & Lịch sử</h4>
-                    <ul class="space-y-2 text-xs text-slate-400">
-                        <li>• Luật Chữ thập đỏ số 11/2008/QH12</li>
-                        <li>• Ngày thành lập: 23/11/1946 tại Vân Đình, Hà Nội</li>
-                        <li>• Gia nhập Phong trào Quốc tế: 04/11/1957</li>
-                        <li>• Cơ quan QLNN: Bộ Nội vụ & Chính phủ</li>
-                    </ul>
-                </div>
-
-                <!-- Col 3 -->
-                <div>
-                    <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4">Thông tin liên hệ Trung ương Hội</h4>
-                    <div class="space-y-2.5 text-xs text-slate-400">
-                        <p><i class="fa-solid fa-location-dot mr-2 text-redcross-500"></i>Trụ sở TW Hội: 82 Nguyễn Du, Hà Nội</p>
-                        <p><i class="fa-solid fa-phone mr-2 text-redcross-500"></i>Điện thoại: (024) 3822 4030</p>
-                        <p><i class="fa-solid fa-envelope mr-2 text-redcross-500"></i>Email: vnrredcross@gmail.com</p>
-                        <p><i class="fa-solid fa-globe mr-2 text-redcross-500"></i>Website: redcross.org.vn</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pt-8 border-t border-slate-800 text-center text-xs text-slate-500">
-                <p>© 2026 Trang tuyên truyền Hoạt động Chữ thập đỏ Việt Nam - Kỷ niệm 80 năm thành lập (1946 - 2026).</p>
-            </div>
+    <footer class="bg-slate-900 text-slate-400 py-10 border-t border-slate-800 text-xs text-center">
+        <div class="max-w-7xl mx-auto px-4 space-y-3">
+            <p class="font-bold text-slate-200">HỘI CHỮ THẬP ĐỎ VIỆT NAM — KỶ NIỆM 80 NĂM HÀNH TRÌNH NHÂN ĐẠO (1946 - 2026)</p>
+            <p>Trang thông tin tuyên truyền pháp luật theo Luật Hoạt động Chữ thập đỏ số 11/2008/QH12 do Quốc hội ban hành.</p>
         </div>
     </footer>
 
-    <!-- MODAL DIALOG FOR LAW & EVENT DETAILS -->
-    <div id="modal-backdrop" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4">
-        <div id="modal-container" class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl transform scale-95 transition-all duration-300 p-6 sm:p-8 relative">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition">
-                <i class="fa-solid fa-xmark text-2xl"></i>
-            </button>
-            <div id="modal-content">
-                <!-- Injected via JavaScript -->
+    <!-- LAW MODAL -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity flex items-center justify-center p-4">
+        <div id="modal-container" class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 sm:p-8 relative shadow-2xl">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <!-- CERTIFICATE MODAL -->
+    <div id="cert-modal-backdrop" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md z-50 hidden opacity-0 transition-opacity flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 relative shadow-2xl border-4 border-amber-400 cert-bg">
+            <button onclick="closeCertModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2"><i class="fa-solid fa-xmark text-2xl"></i></button>
+            
+            <div class="text-center py-4 space-y-3">
+                <div class="w-16 h-16 bg-redcross-600 rounded-2xl mx-auto flex items-center justify-center text-white shadow-lg">
+                    <div class="relative w-8 h-8 flex items-center justify-center">
+                        <div class="absolute w-7 h-2 bg-white rounded-xs"></div>
+                        <div class="absolute w-2 h-7 bg-white rounded-xs"></div>
+                    </div>
+                </div>
+                <h4 class="text-xs font-black tracking-widest text-redcross-600 uppercase">HỘI CHỮ THẬP ĐỎ VIỆT NAM — BẰNG CHỨNG NHẬN</h4>
+                <h3 class="text-2xl sm:text-3xl font-black text-slate-900">ĐẠI SỨ NHÂN ĐẠO 2026</h3>
+                <p class="text-xs text-slate-500 italic">Chứng nhận đã tham gia xuất sắc Thử thách Đấu trí & Ô chữ Tuyên truyền Luật Chữ thập đỏ 2008</p>
+                
+                <div class="my-6 py-4 border-y border-dashed border-slate-300">
+                    <label class="block text-xs font-extrabold text-slate-600 mb-1">Họ và Tên Sinh viên / Tình nguyện viên:</label>
+                    <input type="text" id="cert-student-name" value="NGUYỄN VĂN A" oninput="updateCertName()" class="text-center text-xl font-black text-redcross-700 bg-amber-50/80 border border-amber-200 rounded-xl px-4 py-2 w-full max-w-md focus:outline-none focus:ring-2 focus:ring-redcross-500">
+                </div>
+
+                <div class="flex justify-between items-center text-xs text-slate-500 font-bold px-4">
+                    <div>
+                        <p>Danh hiệu: <span id="cert-rank-text" class="text-slate-900 font-black">Chiến sĩ Nhân đạo</span></p>
+                        <p>Số điểm: <span id="cert-score-text" class="text-amber-600 font-black">100/100</span></p>
+                    </div>
+                    <div class="text-right">
+                        <p>Ngày cấp: <span id="cert-date-text">23/11/2026</span></p>
+                        <p class="text-redcross-600 font-black">Chữ thập đỏ Việt Nam</p>
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-center gap-3">
+                    <button onclick="window.print()" class="px-6 py-3 bg-redcross-600 hover:bg-redcross-700 text-white font-extrabold text-xs rounded-xl shadow-md transition">
+                        <i class="fa-solid fa-print mr-1"></i> In / Tải Bằng Chứng Nhận
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // INTERSECTION OBSERVER FOR SCROLL REVEAL
-        function initScrollReveal() {
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.12
-            };
+        // ========================================================
+        // 1. CROSSWORD GAME ENGINE (GIẢI Ô CHỮ HÀNH TRÌNH NHÂN ĐẠO)
+        // ========================================================
+        const crosswordData = [
+            { id: 1, word: "VUDINHTUNG", offset: 4, clue: "Bác sĩ, Hội trưởng đầu tiên của Hội Hồng Thập tự Việt Nam năm 1946." },
+            { id: 2, word: "HIENMAU", offset: 0, clue: "Hoạt động hiến tặng giọt máu tình nguyện cứu người (Điều 10)." },
+            { id: 3, word: "CHAMSOC", offset: 2, clue: "Hoạt động chăm sóc sức khỏe cộng đồng và phòng chống dịch bệnh (Điều 8)." },
+            { id: 4, word: "TUNGUYEN", offset: 7, clue: "Nguyên tắc cốt lõi hàng đầu của hoạt động Chữ thập đỏ, không vụ lợi (Điều 3)." },
+            { id: 5, word: "DICHBENH", offset: 0, clue: "Tham gia ứng phó, khắc phục thảm họa & dịch bệnh nguy hiểm (Điều 8, 13)." },
+            { id: 6, word: "PHAPLUAT", offset: 6, clue: "Tuân thủ quy định pháp luật Việt Nam và Điều ước quốc tế (Điều 3)." },
+            { id: 7, word: "GIONEVO", offset: 6, clue: "Công ước quốc tế bảo hộ nạn nhân chiến tranh mà Việt Nam gia nhập năm 1957." }
+        ];
 
-            const observer = new IntersectionObserver((entries, obs) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('active');
-                        obs.unobserve(entry.target);
+        let cwTimerInterval = null;
+        let cwSeconds = 0;
+
+        function initCrossword() {
+            const gridContainer = document.getElementById('crossword-grid-container');
+            const cluesContainer = document.getElementById('cw-clues-list');
+            gridContainer.innerHTML = '';
+            cluesContainer.innerHTML = '';
+
+            const maxOffset = Math.max(...crosswordData.map(d => d.offset));
+
+            crosswordData.forEach((row, rowIdx) => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = "flex items-center space-x-1 sm:space-x-1.5";
+
+                // Padding spaces on left
+                const padCount = maxOffset - row.offset;
+                for (let i = 0; i < padCount; i++) {
+                    const emptyCell = document.createElement('div');
+                    emptyCell.className = "cw-cell visibility-hidden opacity-0";
+                    rowDiv.appendChild(emptyCell);
+                }
+
+                // Row Label
+                const numLabel = document.createElement('span');
+                numLabel.className = "text-xs font-black text-slate-400 w-5 text-right mr-1";
+                numLabel.innerText = `${row.id}.`;
+                rowDiv.appendChild(numLabel);
+
+                // Word Input Cells
+                for (let colIdx = 0; colIdx < row.word.length; colIdx++) {
+                    const input = document.createElement('input');
+                    input.type = "text";
+                    input.maxLength = 1;
+                    input.dataset.row = rowIdx;
+                    input.dataset.col = colIdx;
+                    input.dataset.letter = row.word[colIdx];
+                    
+                    const isKeyCol = (colIdx === row.offset);
+                    input.className = `cw-cell border ${isKeyCol ? 'border-redcross-600 bg-redcross-50 text-redcross-700' : 'border-slate-300 bg-slate-50 text-slate-800'} focus:outline-none focus:ring-2 focus:ring-amber-400`;
+
+                    input.addEventListener('input', (e) => {
+                        if (e.target.value.length === 1) {
+                            const next = rowDiv.querySelectorAll('input')[colIdx + 1];
+                            if (next) next.focus();
+                        }
+                    });
+
+                    input.addEventListener('keydown', (e) => {
+                        if (e.key === 'Backspace' && !e.target.value) {
+                            const prev = rowDiv.querySelectorAll('input')[colIdx - 1];
+                            if (prev) prev.focus();
+                        }
+                    });
+
+                    rowDiv.appendChild(input);
+                }
+
+                gridContainer.appendChild(rowDiv);
+
+                // Clue Card
+                const clueCard = document.createElement('div');
+                clueCard.className = "p-3 bg-slate-50 rounded-2xl border border-slate-200 hover:border-amber-400 transition cursor-pointer";
+                clueCard.innerHTML = `
+                    <div class="font-extrabold text-slate-800"><span class="text-amber-600">${row.id}.</span> ${row.clue}</div>
+                    <div class="text-[11px] text-slate-400 mt-1 font-mono">(${row.word.length} chữ cái)</div>
+                `;
+                cluesContainer.appendChild(clueCard);
+            });
+
+            startCwTimer();
+        }
+
+        function startCwTimer() {
+            clearInterval(cwTimerInterval);
+            cwSeconds = 0;
+            cwTimerInterval = setInterval(() => {
+                cwSeconds++;
+                const mins = String(Math.floor(cwSeconds / 60)).padStart(2, '0');
+                const secs = String(cwSeconds % 60).padStart(2, '0');
+                document.getElementById('cw-timer').innerText = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        function checkCrosswordAnswers() {
+            const inputs = document.querySelectorAll('#crossword-grid-container input');
+            let correctCount = 0;
+            let totalRowsCorrect = 0;
+
+            crosswordData.forEach((row, rowIdx) => {
+                const rowInputs = document.querySelectorAll(`#crossword-grid-container input[data-row="${rowIdx}"]`);
+                let rowIsCorrect = true;
+
+                rowInputs.forEach((input, colIdx) => {
+                    const val = input.value.toUpperCase().trim();
+                    const expected = row.word[colIdx];
+
+                    if (val === expected) {
+                        input.classList.remove('border-red-500', 'bg-red-50');
+                        input.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-800');
+                    } else {
+                        rowIsCorrect = false;
+                        if (val) {
+                            input.classList.add('border-red-500', 'bg-red-50');
+                        }
                     }
                 });
-            }, observerOptions);
 
-            document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
-                observer.observe(el);
+                if (rowIsCorrect) totalRowsCorrect++;
             });
+
+            document.getElementById('cw-progress').innerText = `${totalRowsCorrect}/7`;
+
+            if (totalRowsCorrect === 7) {
+                clearInterval(cwTimerInterval);
+                // Highlight Vertical Key Word NHÂN ĐẠO
+                crosswordData.forEach((row, rowIdx) => {
+                    const keyInput = document.querySelector(`#crossword-grid-container input[data-row="${rowIdx}"][data-col="${row.offset}"]`);
+                    if (keyInput) keyInput.classList.add('vertical-highlight');
+                });
+
+                // Confetti Explosion
+                confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+            }
         }
 
-        // 16 HISTORICAL MILESTONES DATA (1946 - 2019)
+        function giveCrosswordHint() {
+            const emptyInputs = Array.from(document.querySelectorAll('#crossword-grid-container input')).filter(i => !i.value);
+            if (emptyInputs.length > 0) {
+                const randomInput = emptyInputs[Math.floor(Math.random() * emptyInputs.length)];
+                randomInput.value = randomInput.dataset.letter;
+                randomInput.classList.add('bg-amber-100', 'border-amber-400');
+            }
+        }
+
+        function resetCrossword() {
+            initCrossword();
+            document.getElementById('cw-progress').innerText = `0/7`;
+        }
+
+        // ========================================================
+        // 2. QUIZ GAME ENGINE (ĐẤU TRÍ CHIẾN SĨ NHÂN ĐẠO)
+        // ========================================================
+        const quizQuestions = [
+            {
+                q: "Hội Chữ thập đỏ Việt Nam được chính thức thành lập vào ngày tháng năm nào?",
+                options: ["23/11/1946", "19/11/1960", "05/06/1957", "31/07/1976"],
+                correct: 0,
+                exp: "Ngày 23/11/1946, Đại hội Đại biểu Hồng Thập tự Việt Nam lần thứ nhất tại Vân Đình (Hà Nội) chính thức thành lập Hội."
+            },
+            {
+                q: "Chủ tịch Hồ Chí Minh đã nhận lời làm Chủ tịch danh dự của Hội trong bao nhiêu năm?",
+                options: ["10 năm", "15 năm", "23 năm", "30 năm"],
+                correct: 2,
+                exp: "Chủ tịch Hồ Chí Minh làm Chủ tịch danh dự của Hội trong suốt 23 năm từ ngày thành lập (1946) cho tới khi Người qua đời (1969)."
+            },
+            {
+                q: "Luật Hoạt động Chữ thập đỏ hiện hành của Việt Nam mang số hiệu nào?",
+                options: ["Luật số 11/2008/QH12", "Luật số 25/2012/QH13", "Luật số 05/2005/QH11", "Luật số 51/2001/QH10"],
+                correct: 0,
+                exp: "Luật Hoạt động Chữ thập đỏ số 11/2008/QH12 do Quốc hội khóa XII thông qua ngày 03/6/2008, có hiệu lực từ 01/01/2009."
+            },
+            {
+                q: "Đâu KHÔNG PHẢI là nguyên tắc hoạt động Chữ thập đỏ theo Điều 3 Luật Chữ thập đỏ 2008?",
+                options: ["Tự nguyện, không vụ lợi", "Công khai, minh bạch", "Phân biệt đối xử theo mức đóng góp", "Tuân thủ pháp luật Việt Nam"],
+                correct: 2,
+                exp: "Điều 3 quy định rõ nguyên tắc: 'Không phân biệt đối xử, phù hợp với truyền thống nhân ái của dân tộc'."
+            },
+            {
+                q: "Biểu tượng Chữ thập đỏ chuẩn được pháp luật bảo hộ có đặc điểm gì?",
+                options: ["Hình chữ thập màu đỏ trên nền trắng", "Hình trăng lưỡi liềm đỏ trên nền xanh", "Hình sao năm cánh màu đỏ", "Hình pha lê đỏ trên nền vàng"],
+                correct: 0,
+                exp: "Điều 14 Luật Chữ thập đỏ 2008 quy định: 'Biểu tượng Chữ thập đỏ là hình chữ thập màu đỏ, trên nền trắng'."
+            },
+            {
+                q: "Hành vi nào sau đây bị NGHIÊM CẤM theo Điều 6 Luật Chữ thập đỏ 2008?",
+                options: ["Tuyên truyền kỹ năng sơ cấp cứu", "Yêu cầu người được cứu trợ trả chi phí phân phối hiện vật", "Tổ chức hiến máu tình nguyện", "Quyên góp từ thiện công khai"],
+                correct: 1,
+                exp: "Khoản 6 Điều 6 nghiêm cấm yêu cầu người được cứu trợ trả chi phí tiếp nhận, vận chuyển, phân phối tiền, hiện vật."
+            }
+        ];
+
+        let quizCurrentIdx = 0;
+        let quizScore = 0;
+        let quizStreak = 0;
+        let quizTimer = null;
+        let quizTimeLeft = 15;
+
+        function startQuiz() {
+            quizCurrentIdx = 0;
+            quizScore = 0;
+            quizStreak = 0;
+
+            document.getElementById('quiz-start-view').classList.add('hidden');
+            document.getElementById('quiz-results-view').classList.add('hidden');
+            document.getElementById('quiz-active-view').classList.remove('hidden');
+
+            renderQuizQuestion();
+        }
+
+        function renderQuizQuestion() {
+            clearInterval(quizTimer);
+            quizTimeLeft = 15;
+
+            const qData = quizQuestions[quizCurrentIdx];
+            document.getElementById('quiz-current-num').innerText = quizCurrentIdx + 1;
+            document.getElementById('quiz-streak').innerText = quizStreak;
+            document.getElementById('quiz-time-left').innerText = quizTimeLeft;
+            document.getElementById('quiz-question-text').innerText = qData.q;
+
+            const optionsGrid = document.getElementById('quiz-options-grid');
+            optionsGrid.innerHTML = '';
+
+            document.getElementById('quiz-explanation-box').classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full p-4 rounded-2xl bg-slate-700/60 hover:bg-slate-700 text-left font-bold text-sm text-slate-100 border border-slate-600/80 transition flex items-center justify-between";
+                btn.innerHTML = `<span>${String.fromCharCode(65 + idx)}. ${opt}</span> <i class="fa-regular fa-circle text-slate-400"></i>`;
+                btn.onclick = () => selectQuizOption(idx);
+                optionsGrid.appendChild(btn);
+            });
+
+            // Start Timer Bar
+            const timerBar = document.getElementById('quiz-timer-bar');
+            timerBar.style.width = '100%';
+            quizTimer = setInterval(() => {
+                quizTimeLeft--;
+                document.getElementById('quiz-time-left').innerText = quizTimeLeft;
+                timerBar.style.width = `${(quizTimeLeft / 15) * 100}%`;
+
+                if (quizTimeLeft <= 0) {
+                    clearInterval(quizTimer);
+                    selectQuizOption(-1); // Time out
+                }
+            }, 1000);
+        }
+
+        function selectQuizOption(selectedIdx) {
+            clearInterval(quizTimer);
+            const qData = quizQuestions[quizCurrentIdx];
+            const optionBtns = document.querySelectorAll('#quiz-options-grid button');
+
+            optionBtns.forEach(btn => btn.disabled = true);
+
+            if (selectedIdx === qData.correct) {
+                quizScore += 100 + (quizStreak * 10);
+                quizStreak++;
+                if (selectedIdx >= 0) {
+                    optionBtns[selectedIdx].className = "w-full p-4 rounded-2xl bg-emerald-600 text-left font-bold text-sm text-white border border-emerald-500 transition flex items-center justify-between";
+                    optionBtns[selectedIdx].querySelector('i').className = "fa-solid fa-circle-check text-white";
+                }
+            } else {
+                quizStreak = 0;
+                if (selectedIdx >= 0) {
+                    optionBtns[selectedIdx].className = "w-full p-4 rounded-2xl bg-rose-600 text-left font-bold text-sm text-white border border-rose-500 transition flex items-center justify-between";
+                    optionBtns[selectedIdx].querySelector('i').className = "fa-solid fa-circle-xmark text-white";
+                }
+                // Highlight correct one
+                optionBtns[qData.correct].className = "w-full p-4 rounded-2xl bg-emerald-600/80 text-left font-bold text-sm text-white border border-emerald-500 transition flex items-center justify-between";
+            }
+
+            // Show explanation
+            const expBox = document.getElementById('quiz-explanation-box');
+            expBox.innerHTML = `<strong>Giải thích Luật:</strong> ${qData.exp}`;
+            expBox.classList.remove('hidden');
+
+            document.getElementById('quiz-next-btn').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            quizCurrentIdx++;
+            if (quizCurrentIdx < quizQuestions.length) {
+                renderQuizQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            document.getElementById('quiz-active-view').classList.add('hidden');
+            document.getElementById('quiz-results-view').classList.remove('hidden');
+
+            const correctCount = Math.round(quizScore / 100);
+            document.getElementById('quiz-final-score').innerText = quizScore;
+            document.getElementById('quiz-correct-count').innerText = correctCount;
+
+            let rank = "Tình nguyện viên Tập sự";
+            let badgeIcon = "fa-user-graduate";
+
+            if (quizScore >= 500) {
+                rank = "Đại sứ Chữ Thập Đỏ 2026";
+                badgeIcon = "fa-crown";
+                confetti({ particleCount: 100, spread: 70 });
+            } else if (quizScore >= 300) {
+                rank = "Chiến sĩ Nhân đạo";
+                badgeIcon = "fa-shield-halved";
+            }
+
+            document.getElementById('quiz-final-rank').innerText = rank;
+            document.getElementById('quiz-badge-title').innerText = rank;
+            document.getElementById('quiz-badge-icon').className = `fa-solid ${badgeIcon}`;
+
+            // Save score
+            localStorage.setItem('vnr_quiz_score', quizScore);
+            localStorage.setItem('vnr_quiz_rank', rank);
+        }
+
+        // ========================================================
+        // 3. CERTIFICATE MODAL CONTROLS
+        // ========================================================
+        function openCertificateModal() {
+            const score = localStorage.getItem('vnr_quiz_score') || quizScore;
+            const rank = localStorage.getItem('vnr_quiz_rank') || "Chiến sĩ Nhân đạo";
+
+            document.getElementById('cert-score-text').innerText = `${score} điểm`;
+            document.getElementById('cert-rank-text').innerText = rank;
+            document.getElementById('cert-date-text').innerText = new Date().toLocaleDateString('vi-VN');
+
+            const modal = document.getElementById('cert-modal-backdrop');
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.remove('opacity-0'), 10);
+        }
+
+        function closeCertModal() {
+            const modal = document.getElementById('cert-modal-backdrop');
+            modal.classList.add('opacity-0');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function updateCertName() {
+            // Live update name in input
+        }
+
+        // ========================================================
+        // 4. TIMELINE & LAW DATABASE DATA
+        // ========================================================
         const timelineData = [
-            {
-                date: "23/11/1946",
-                era: "1946-1975",
-                title: "Thành lập Hội Hồng Thập Tự Việt Nam (Đại hội I)",
-                location: "Vân Đình, Ứng Hòa, Hà Nội",
-                badge: "Thành lập Hội",
-                icon: "fa-flag-checkered",
-                details: "Đại hội Đại biểu Hồng Thập tự Việt Nam lần thứ nhất chính thức thành lập Hội. <strong>Chủ tịch Hồ Chí Minh</strong> nhận lời làm Chủ tịch danh dự của Hội trong suốt 23 năm cho tới khi Người qua đời. Bác sĩ <strong>Vũ Đình Tụng</strong> được bầu làm Hội trưởng."
-            },
-            {
-                date: "05/6/1957 & 04/11/1957",
-                era: "1946-1975",
-                title: "Gia nhập Công ước Giơ-ne-vơ & Phong trào Quốc tế",
-                location: "Thụy Sỹ / Quốc tế",
-                badge: "Hội nhập quốc tế",
-                icon: "fa-globe",
-                details: "Ngày 05/06/1957, Chủ tịch Hồ Chí Minh gửi Công hàm tới Chính phủ Thụy Sỹ gia nhập 4 Công ước Giơ-ne-vơ. Ngày 04/11/1957, Hội chính thức được công nhận là thành viên của Phong trào Chữ thập đỏ và Trăng lưỡi liềm đỏ Quốc tế."
-            },
-            {
-                date: "19/11/1960",
-                era: "1946-1975",
-                title: "Đại hội Đại biểu toàn quốc lần thứ II",
-                location: "Hà Nội",
-                badge: "Đại hội toàn quốc",
-                icon: "fa-users",
-                details: "Đại hội Đại biểu toàn quốc lần thứ II. Bác sĩ <strong>Vũ Đình Tụng</strong> tiếp tục được bầu làm Chủ tịch Hội."
-            },
-            {
-                date: "27/2/1961",
-                era: "1946-1975",
-                title: "Thành lập Hồng thập tự giải phóng miền Nam",
-                location: "Miền Nam Việt Nam",
-                badge: "Thời kỳ kháng chiến",
-                icon: "fa-hand-holding-medical",
-                details: "Tổ chức Hồng thập tự giải phóng của Mặt trận dân tộc giải phóng miền Nam ra đời do Bác sĩ <strong>Phùng Văn Cung</strong> làm Chủ tịch."
-            },
-            {
-                date: "15/12/1965",
-                era: "1946-1975",
-                title: "Đại hội III — Đổi tên thành Hội Chữ thập đỏ Việt Nam",
-                location: "Hà Nội",
-                badge: "Đổi tên chính thức",
-                icon: "fa-id-card",
-                details: "Đại hội III chính thức đổi tên Hội Hồng thập tự Việt Nam thành <strong>Hội Chữ thập đỏ Việt Nam</strong>. Bác sĩ Vũ Đình Tụng tiếp tục giữ chức Chủ tịch Hội."
-            },
-            {
-                date: "10-11/12/1971",
-                era: "1946-1975",
-                title: "Đại hội IV & Huân chương Lao động hạng Nhì",
-                location: "Hà Nội",
-                badge: "Huân chương Lao động",
-                icon: "fa-award",
-                details: "Đại hội Đại biểu toàn quốc lần thứ IV. Hội Chữ thập đỏ Việt Nam vinh dự được tặng thưởng Huân chương Lao động hạng Nhì. Bác sĩ Vũ Đình Tụng tiếp tục làm Chủ tịch."
-            },
-            {
-                date: "Tháng 6/1973",
-                era: "1946-1975",
-                title: "Đại hội Hội Hồng thập tự Cộng hòa miền Nam Việt Nam",
-                location: "Miền Nam Việt Nam",
-                badge: "Đại hội miền Nam",
-                icon: "fa-star",
-                details: "Đại hội Hội Hồng thập tự Cộng hòa miền Nam Việt Nam được tổ chức thành công. Giáo sư <strong>Nguyễn Văn Thủ</strong> được bầu làm Chủ tịch Hội."
-            },
-            {
-                date: "31/7/1976",
-                era: "1976-2000",
-                title: "Hợp nhất Hội Chữ thập đỏ hai miền",
-                location: "Thành phố Hồ Chí Minh",
-                badge: "Hợp nhất đất nước",
-                icon: "fa-handshake",
-                details: "Hội nghị hợp nhất Hội Chữ thập đỏ Việt Nam và Hội Hồng thập tự Cộng hòa miền Nam Việt Nam thành <strong>Hội Chữ thập đỏ Việt Nam</strong> thống nhất. Giáo sư Nguyễn Văn Thủ được bầu làm Chủ tịch."
-            },
-            {
-                date: "11-12/3/1988",
-                era: "1976-2000",
-                title: "Đại hội V — Đón nhận Huân chương Độc lập hạng Nhất",
-                location: "Hà Nội",
-                badge: "Huân chương Độc lập",
-                icon: "fa-medal",
-                details: "Giáo sư <strong>Nguyễn Trọng Nhân</strong> được bầu làm Chủ tịch Hội. Hội vinh dự được Đảng và Nhà nước tặng thưởng Huân chương Độc lập hạng Nhất."
-            },
-            {
-                date: "15-17/3/1995",
-                era: "1976-2000",
-                title: "Đại hội VI — Tổng Bí thư Đỗ Mười làm CT Danh dự",
-                location: "Hà Nội",
-                badge: "Đại hội toàn quốc",
-                icon: "fa-building-columns",
-                details: "Đại hội VI suy tôn Tổng Bí thư <strong>Đỗ Mười</strong> làm Chủ tịch danh dự của Hội. Giáo sư Nguyễn Trọng Nhân tiếp tục giữ chức Chủ tịch Hội."
-            },
-            {
-                date: "07-09/8/2001",
-                era: "2001-now",
-                title: "Đại hội VII — Chủ tịch nước Trần Đức Lương làm CT Danh dự",
-                location: "Hà Nội",
-                badge: "Đại hội toàn quốc",
-                icon: "fa-ribbon",
-                details: "Đại hội VII suy tôn Chủ tịch nước <strong>Trần Đức Lương</strong> làm Chủ tịch danh dự Hội. Giáo sư Nguyễn Trọng Nhân tiếp tục làm Chủ tịch Hội."
-            },
-            {
-                date: "31/7/2003 & 20/9/2005",
-                era: "2001-now",
-                title: "Củng cố Lãnh đạo & Huân chương Lao động hạng Nhất",
-                location: "Hà Nội",
-                badge: "Huân chương Lao động",
-                icon: "fa-trophy",
-                details: "Ngày 31/7/2003, cử GS.TSKH <strong>Nguyễn Văn Thưởng</strong> làm Chủ tịch kiêm Tổng thư ký. Ngày 20/9/2005, Hội đón nhận Huân chương Lao động hạng Nhất."
-            },
-            {
-                date: "28-29/6/2007",
-                era: "2001-now",
-                title: "Đại hội VIII — TS. Trần Ngọc Tăng làm Chủ tịch",
-                location: "Hà Nội",
-                badge: "Đại hội toàn quốc",
-                icon: "fa-scroll",
-                details: "Nguyên Chủ tịch nước Trần Đức Lương tiếp tục làm Chủ tịch danh dự. Tiến sĩ <strong>Trần Ngọc Tăng</strong> được bầu làm Chủ tịch Hội Chữ thập đỏ Việt Nam."
-            },
-            {
-                date: "04-05/7/2012",
-                era: "2001-now",
-                title: "Đại hội IX — Ông Nguyễn Hải Đường làm Chủ tịch",
-                location: "Hà Nội",
-                badge: "Đại hội toàn quốc",
-                icon: "fa-heart",
-                details: "Chủ tịch nước <strong>Trương Tấn Sang</strong> được suy tôn làm Chủ tịch danh dự. Ông <strong>Nguyễn Hải Đường</strong> được bầu làm Chủ tịch Hội Chữ thập đỏ Việt Nam."
-            },
-            {
-                date: "15-16/8/2017",
-                era: "2001-now",
-                title: "Đại hội X — Bà Nguyễn Thị Xuân Thu làm Chủ tịch",
-                location: "Hà Nội",
-                badge: "Đại hội toàn quốc",
-                icon: "fa-pen-nib",
-                details: "Chủ tịch nước <strong>Trần Đại Quang</strong> được suy tôn làm Chủ tịch danh dự. Bà <strong>Nguyễn Thị Xuân Thu</strong> được bầu làm Chủ tịch Hội."
-            },
-            {
-                date: "Tháng 01/2019",
-                era: "2001-now",
-                title: "Tổng Bí thư, Chủ tịch nước Nguyễn Phú Trọng làm CT Danh dự",
-                location: "Hà Nội",
-                badge: "Chủ tịch Danh dự",
-                icon: "fa-crown",
-                details: "Tổng Bí thư, Chủ tịch nước <strong>Nguyễn Phú Trọng</strong> được Bộ Chính trị, BCH Trung ương Đảng phân công làm Chủ tịch danh dự của Hội Chữ thập đỏ Việt Nam."
-            }
+            { date: "23/11/1946", title: "Thành lập Hội Hồng Thập Tự Việt Nam", details: "Đại hội I tại Vân Đình (Hà Nội). Chủ tịch Hồ Chí Minh làm Chủ tịch danh dự 23 năm." },
+            { date: "04/11/1957", title: "Gia nhập Phong trào Chữ thập đỏ Quốc tế", details: "Chính thức công nhận là thành viên Phong trào Chữ thập đỏ & Trăng lưỡi liềm đỏ Quốc tế." },
+            { date: "15/12/1965", title: "Đổi tên thành Hội Chữ thập đỏ Việt Nam", details: "Đại hội III chính thức đổi tên Hội thành Hội Chữ thập đỏ Việt Nam." },
+            { date: "31/7/1976", title: "Hợp nhất Hội Chữ thập đỏ hai miền", details: "Hợp nhất Hội Chữ thập đỏ hai miền Nam - Bắc thành tổ chức thống nhất toàn quốc." },
+            { date: "03/06/2008", title: "Thông qua Luật Hoạt động Chữ thập đỏ", details: "Quốc hội khóa XII thông qua Luật Hoạt động Chữ thập đỏ số 11/2008/QH12." }
         ];
 
-        // RENDER TIMELINE WITH ANIMATIONS
-        function renderTimeline(eraFilter = 'all') {
-            const container = document.getElementById('timeline-events-container');
-            const filtered = eraFilter === 'all' 
-                ? timelineData 
-                : timelineData.filter(item => item.era === eraFilter);
-
-            container.innerHTML = filtered.map((item, index) => {
-                const isEven = index % 2 === 0;
-                const revealClass = isEven ? 'reveal-left' : 'reveal-right';
-
-                return `
-                    <div class="relative flex flex-col md:flex-row items-center group ${revealClass}">
-                        <!-- Left/Right Card -->
-                        <div class="w-full md:w-1/2 md:pr-10 ${isEven ? 'md:text-right' : 'md:order-2 md:pl-10 md:text-left'} pl-10 md:pl-0">
-                            <div class="bg-white p-5 sm:p-6 rounded-3xl shadow-sm border border-slate-200/80 hover:border-redcross-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                                <div class="flex items-center space-x-2 ${isEven ? 'md:justify-end' : 'justify-start'} mb-2">
-                                    <span class="text-xs font-black text-redcross-600 bg-redcross-50 px-3 py-1 rounded-full border border-redcross-100">${item.date}</span>
-                                    <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">${item.badge}</span>
-                                </div>
-                                <h3 class="text-base sm:text-lg font-black text-slate-900 mb-1 leading-snug">${item.title}</h3>
-                                <p class="text-xs text-redcross-700 font-semibold mb-2"><i class="fa-solid fa-location-dot mr-1"></i>${item.location}</p>
-                                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">${item.details}</p>
-                            </div>
+        function renderTimeline() {
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = timelineData.map((item, idx) => `
+                <div class="relative flex flex-col md:flex-row items-center reveal">
+                    <div class="w-full md:w-1/2 md:pr-8 ${idx % 2 === 0 ? 'md:text-right' : 'md:order-2 md:pl-8 md:text-left'} pl-8">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
+                            <span class="text-xs font-black text-redcross-600 bg-redcross-50 px-3 py-1 rounded-full">${item.date}</span>
+                            <h4 class="text-base font-black text-slate-900 mt-2 mb-1">${item.title}</h4>
+                            <p class="text-xs text-slate-600">${item.details}</p>
                         </div>
-
-                        <!-- Pulsing Center Node -->
-                        <div class="absolute left-4 md:left-1/2 transform -translate-x-1/2 w-9 h-9 rounded-full bg-redcross-600 border-4 border-white text-white flex items-center justify-center text-xs shadow-md z-10 pulse-glow group-hover:scale-125 transition duration-300">
-                            <i class="fa-solid ${item.icon}"></i>
-                        </div>
-
-                        <!-- Spacer -->
-                        <div class="hidden md:block w-1/2 ${isEven ? 'order-2' : 'order-1'}"></div>
                     </div>
-                `;
-            }).join('');
-
-            // Re-init reveal observer for newly rendered timeline items
-            initScrollReveal();
+                    <div class="absolute left-2 md:left-1/2 transform -translate-x-1/2 w-6 h-6 rounded-full bg-redcross-600 border-4 border-white shadow-md"></div>
+                </div>
+            `).join('');
         }
 
-        function filterTimeline(era) {
-            document.querySelectorAll('.era-btn').forEach(btn => {
-                btn.className = "era-btn px-5 py-2.5 text-xs font-extrabold rounded-full bg-white text-slate-700 hover:bg-redcross-50 border border-slate-200 transition duration-200 transform hover:scale-105";
-            });
-            
-            const btnMap = {
-                'all': 'btn-era-all',
-                '1946-1975': 'btn-era-1',
-                '1976-2000': 'btn-era-2',
-                '2001-now': 'btn-era-3'
-            };
-            
-            if (btnMap[era]) {
-                document.getElementById(btnMap[era]).className = "era-btn px-5 py-2.5 text-xs font-extrabold rounded-full bg-redcross-600 text-white shadow-md shadow-redcross-600/20 transition duration-200 transform hover:scale-105";
-            }
-
-            renderTimeline(era);
-        }
-
-        // LAW DATABASE FOR SEARCH & MODALS
         const lawDatabase = [
-            {
-                id: 'modal-d7',
-                title: 'Điều 7. Cứu trợ khẩn cấp và trợ giúp nhân đạo',
-                chapter: 'Chương II - Lĩnh vực 1',
-                content: `
-                    <p class="mb-3"><strong>1. Hoạt động cứu trợ khẩn cấp:</strong> Hỗ trợ kịp thời, trực tiếp cho nạn nhân chiến tranh, thiên tai, dịch bệnh, hỏa hoạn, tai nạn giao thông và thảm họa khác bao gồm:</p>
-                    <ul class="list-disc pl-5 mb-4 text-slate-600 space-y-1.5">
-                        <li>Cứu trợ bằng tiền, hiện vật và giúp đỡ khắc phục khó khăn ban đầu.</li>
-                        <li>Động viên tinh thần, hỗ trợ tâm lý.</li>
-                    </ul>
-                    <p class="mb-3"><strong>2. Hoạt động trợ giúp nhân đạo:</strong> Trợ giúp cho người khuyết tật, người già không nơi nương tựa, trẻ em mồ côi, người có hoàn cảnh đặc biệt khó khăn:</p>
-                    <ul class="list-disc pl-5 mb-4 text-slate-600 space-y-1.5">
-                        <li>Trợ giúp tiền, phương tiện, công sức.</li>
-                        <li>Trợ giúp kinh phí học nghề, tạo việc làm.</li>
-                        <li>Trợ giúp kinh phí khám chữa bệnh, phục hồi chức năng.</li>
-                    </ul>
-                    <p class="p-3.5 bg-redcross-50 rounded-2xl text-redcross-800 text-xs font-semibold border border-redcross-200"><strong>Nguyên tắc thực hiện (Khoản 3):</strong> Ưu tiên nơi và đối tượng khó khăn nhất. Cứu trợ khẩn cấp giao ngay; trợ giúp nhân đạo bình xét công khai tại cộng đồng và UBND cấp xã xác nhận.</p>
-                `
-            },
-            {
-                id: 'modal-d8',
-                title: 'Điều 8. Chăm sóc sức khỏe cộng đồng',
-                chapter: 'Chương II - Lĩnh vực 2',
-                content: `
-                    <p class="mb-3">Hoạt động chăm sóc sức khỏe góp phần bảo vệ và nâng cao sức khỏe nhân dân, tham gia phòng chống dịch bệnh bao gồm:</p>
-                    <ol class="list-decimal pl-5 space-y-2 text-slate-600">
-                        <li>Tuyên truyền, phổ biến kiến thức về chăm sóc sức khỏe; vận động nhân dân thực hiện biện pháp chăm sóc sức khỏe cộng đồng.</li>
-                        <li>Tổ chức huấn luyện, đào tạo hội viên, tình nguyện viên thực hiện chăm sóc sức khỏe.</li>
-                        <li>Chủ động tham gia phòng, chống dịch bệnh.</li>
-                        <li>Tổ chức cơ sở khám bệnh, chữa bệnh nhân đạo, khám chữa bệnh lưu động theo quy định.</li>
-                    </ol>
-                `
-            },
-            {
-                id: 'modal-d9',
-                title: 'Điều 9. Sơ cấp cứu ban đầu',
-                chapter: 'Chương II - Lĩnh vực 3',
-                content: `
-                    <p class="mb-3">Hoạt động sơ cấp cứu ban đầu đối với nạn nhân tai nạn, thảm họa, thiên tai bao gồm:</p>
-                    <ol class="list-decimal pl-5 space-y-2 text-slate-600">
-                        <li>Tổ chức sơ cấp cứu tại chỗ, kịp thời đưa nạn nhân đến cơ sở y tế và báo tin cho gia đình hoặc UBND cấp xã.</li>
-                        <li>Tổ chức đào tạo, huấn luyện kỹ năng sơ cấp cứu cho tình nguyện viên và nhân dân.</li>
-                        <li>Thành lập điểm, trạm sơ cấp cứu ở khu vực thường xuyên xảy ra tai nạn và cung cấp dụng cụ sơ cấp cứu.</li>
-                    </ol>
-                `
-            },
-            {
-                id: 'modal-d10',
-                title: 'Điều 10. Hiến máu, hiến mô, bộ phận cơ thể người & hiến xác',
-                chapter: 'Chương II - Lĩnh vực 4',
-                content: `
-                    <p class="mb-3"><strong>1. Hiến máu nhân đạo:</strong> Tuyên truyền, vận động hiến máu; tổ chức lực lượng, tiếp nhận máu và phối hợp với ngành y tế xét nghiệm, bảo quản đúng kỹ thuật.</p>
-                    <p class="mb-3"><strong>2. Hiến mô, bộ phận cơ thể & hiến xác:</strong> Tuyên truyền rộng rãi ý nghĩa nhân văn cao đẹp của việc hiến mô, tạng và hiến xác cho y học cứu người.</p>
-                `
-            },
-            {
-                id: 'modal-d11',
-                title: 'Điều 11. Tìm kiếm tin tức thân nhân thất lạc',
-                chapter: 'Chương II - Lĩnh vực 5',
-                content: `
-                    <p class="mb-3">Cung cấp thông tin hoặc hỗ trợ việc gặp gỡ, đoàn tụ cho cá nhân, gia đình bị thất lạc do chiến tranh, thiên tai, thảm họa trong và ngoài nước:</p>
-                    <ol class="list-decimal pl-5 space-y-2 text-slate-600">
-                        <li>Tuyên truyền về mục đích, ý nghĩa của hoạt động tìm kiếm tin tức thân nhân.</li>
-                        <li>Thu thập, xử lý, hỗ trợ trao đổi thông tin liên quan khi liên lạc bị gián đoạn.</li>
-                        <li>Tư vấn, hướng dẫn, trợ giúp thủ tục để gia đình sớm đoàn tụ.</li>
-                    </ol>
-                `
-            },
-            {
-                id: 'modal-d12',
-                title: 'Điều 12. Tuyên truyền các giá trị nhân đạo',
-                chapter: 'Chương II - Lĩnh vực 6',
-                content: `
-                    <p class="mb-3">Hoạt động nâng cao nhận thức về:</p>
-                    <ul class="list-disc pl-5 space-y-2 text-slate-600">
-                        <li>Mục đích, ý nghĩa hoạt động Chữ thập đỏ; truyền thống nhân ái thương người của dân tộc Việt Nam.</li>
-                        <li>Chính sách, pháp luật của Nhà nước về hoạt động Chữ thập đỏ.</li>
-                        <li>Pháp luật nhân đạo quốc tế và các nguyên tắc của Phong trào Chữ thập đỏ & Trăng lưỡi liềm đỏ Quốc tế.</li>
-                    </ul>
-                `
-            },
-            {
-                id: 'modal-d13',
-                title: 'Điều 13. Phòng ngừa, ứng phó thảm họa',
-                chapter: 'Chương II - Lĩnh vực 7',
-                content: `
-                    <p class="mb-3">Giảm thiểu nguy cơ xảy ra thảm họa, thiệt hại về người và tài sản:</p>
-                    <ol class="list-decimal pl-5 space-y-2 text-slate-600">
-                        <li>Tuyên truyền, hướng dẫn kỹ năng phòng ngừa, ứng phó thảm họa cho nhân dân.</li>
-                        <li>Tổ chức lực lượng, phương tiện, vật tư ứng phó.</li>
-                        <li>Tham gia sơ tán, di dời, bảo vệ nhân dân, cứu nạn và hỗ trợ phục hồi cộng đồng sau thảm họa.</li>
-                    </ol>
-                `
-            }
+            { id: 'modal-d7', title: 'Điều 7. Cứu trợ khẩn cấp và trợ giúp nhân đạo', content: 'Hỗ trợ tiền, hiện vật cho nạn nhân thiên tai, dịch bệnh; trợ giúp học nghề, khám chữa bệnh cho người khó khăn.' },
+            { id: 'modal-d8', title: 'Điều 8. Chăm sóc sức khỏe cộng đồng', content: 'Tuyên truyền y tế phòng dịch, hướng dẫn tự chăm sóc sức khỏe, tổ chức khám chữa bệnh nhân đạo lưu động.' },
+            { id: 'modal-d9', title: 'Điều 9. Sơ cấp cứu ban đầu', content: 'Tổ chức sơ cấp cứu tại chỗ, kịp thời đưa nạn nhân đến cơ sở y tế và huấn luyện kỹ năng sơ cấp cứu.' },
+            { id: 'modal-d10', title: 'Điều 10. Hiến máu, hiến mô, tạng & hiến xác', content: 'Vận động hiến máu tình nguyện; tuyên truyền ý nghĩa nhân văn của việc đăng ký hiến mô, tạng và hiến xác.' },
+            { id: 'modal-d11', title: 'Điều 11. Tìm kiếm tin tức thân nhân thất lạc', content: 'Thu thập thông tin, hỗ trợ trao đổi thông tin giúp gia đình thất lạc do chiến tranh, thiên tai sớm đoàn tụ.' },
+            { id: 'modal-d12', title: 'Điều 12. Tuyên truyền các giá trị nhân đạo', content: 'Nâng cao nhận thức về truyền thống nhân ái, Luật Chữ thập đỏ và Pháp luật nhân đạo quốc tế.' }
         ];
 
-        // RENDER LAW SEARCH RESULTS
         function renderLawSearch(items) {
             const container = document.getElementById('law-results');
-            if (items.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-8 text-slate-500 text-sm">
-                        <i class="fa-solid fa-circle-question text-3xl mb-2 text-slate-300"></i>
-                        <p>Không tìm thấy điều luật phù hợp với từ khóa.</p>
-                    </div>
-                `;
-                return;
-            }
-
             container.innerHTML = items.map(item => `
-                <div class="p-4.5 bg-slate-50/80 border border-slate-200/80 rounded-2xl hover:border-redcross-300 hover:shadow-md transition duration-200 cursor-pointer" onclick="openModal('${item.id}')">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <span class="text-[10px] font-black text-redcross-600 uppercase bg-redcross-100 px-2.5 py-0.5 rounded-md">${item.chapter}</span>
-                        <span class="text-xs text-slate-400 font-semibold">Xem chi tiết <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i></span>
-                    </div>
+                <div class="p-4 bg-white border border-slate-200 rounded-2xl hover:border-redcross-400 transition cursor-pointer" onclick="openModal('${item.id}')">
                     <h4 class="font-bold text-slate-900 text-sm mb-1">${item.title}</h4>
-                    <p class="text-xs text-slate-600 line-clamp-2">${item.content.replace(/<[^>]*>?/gm, '')}</p>
+                    <p class="text-xs text-slate-600">${item.content}</p>
                 </div>
             `).join('');
         }
 
         function filterLaws() {
             const query = document.getElementById('law-search-input').value.toLowerCase().trim();
-            if (!query) {
-                renderLawSearch(lawDatabase);
-                return;
-            }
-            const filtered = lawDatabase.filter(item => 
-                item.title.toLowerCase().includes(query) || 
-                item.content.toLowerCase().includes(query) ||
-                item.chapter.toLowerCase().includes(query)
-            );
+            const filtered = lawDatabase.filter(item => item.title.toLowerCase().includes(query) || item.content.toLowerCase().includes(query));
             renderLawSearch(filtered);
         }
 
-        // MODAL DIALOG CONTROLS
-        const backdrop = document.getElementById('modal-backdrop');
-        const container = document.getElementById('modal-container');
-        const modalContent = document.getElementById('modal-content');
-
-        function openModal(articleId) {
-            const article = lawDatabase.find(item => item.id === articleId);
-            if (!article) return;
-
-            modalContent.innerHTML = `
-                <span class="text-xs font-black text-redcross-600 uppercase tracking-widest bg-redcross-100 px-3 py-1 rounded-md">${article.chapter}</span>
-                <h3 class="text-xl font-black text-slate-900 mt-2.5 mb-4 border-b border-slate-200 pb-3">${article.title}</h3>
-                <div class="text-sm text-slate-700 leading-relaxed">
-                    ${article.content}
-                </div>
+        function openModal(id) {
+            const item = lawDatabase.find(l => l.id === id);
+            if (!item) return;
+            document.getElementById('modal-content').innerHTML = `
+                <h3 class="text-lg font-black text-slate-900 mb-3">${item.title}</h3>
+                <p class="text-sm text-slate-700 leading-relaxed">${item.content}</p>
             `;
-
+            const backdrop = document.getElementById('modal-backdrop');
             backdrop.classList.remove('hidden');
-            setTimeout(() => {
-                backdrop.classList.remove('opacity-0');
-                container.classList.remove('scale-95');
-                container.classList.add('scale-100');
-            }, 10);
+            setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
         }
 
         function closeModal() {
+            const backdrop = document.getElementById('modal-backdrop');
             backdrop.classList.add('opacity-0');
-            container.classList.remove('scale-100');
-            container.classList.add('scale-95');
-            setTimeout(() => {
-                backdrop.classList.add('hidden');
-            }, 300);
+            setTimeout(() => backdrop.classList.add('hidden'), 300);
         }
 
-        backdrop.addEventListener('click', (e) => {
-            if (e.target === backdrop) closeModal();
+        // MOBILE MENU TOGGLE
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
         });
+        document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.add('hidden');
+        }));
 
-        // MOBILE NAVIGATION DRAWER
-        const menuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const menuIcon = document.getElementById('menu-icon');
-
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-            if (mobileMenu.classList.contains('hidden')) {
-                menuIcon.className = 'fa-solid fa-bars text-xl';
-            } else {
-                menuIcon.className = 'fa-solid fa-xmark text-xl';
-            }
-        });
-
-        document.querySelectorAll('.mobile-link').forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-                menuIcon.className = 'fa-solid fa-bars text-xl';
-            });
-        });
-
-        // INITIALIZE APP
+        // INITIALIZE ON LOAD
         window.addEventListener('DOMContentLoaded', () => {
+            initCrossword();
             renderTimeline();
             renderLawSearch(lawDatabase);
-            initScrollReveal();
+
+            // Scroll reveal observer
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('active'); });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
         });
     </script>
 </body>
