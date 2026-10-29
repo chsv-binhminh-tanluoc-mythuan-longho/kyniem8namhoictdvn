@@ -6,10 +6,10 @@
     <title>Hội Chữ Thập Đỏ Việt Nam - 80 Năm Hành Trình Nhân Đạo & Luật Hoạt Động</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
+    <!-- FontAwesome Icons CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = {
@@ -19,6 +19,7 @@
                         redcross: {
                             50: '#fef2f2',
                             100: '#ffe1e1',
+                            200: '#fca5a5',
                             500: '#ef4444',
                             600: '#da251c', // Màu đỏ chuẩn Chữ thập đỏ Việt Nam
                             700: '#b91c1c',
@@ -26,7 +27,7 @@
                             900: '#7f1d1d',
                         },
                         youthblue: {
-                            500: '#00529C', // Màu xanh thanh niên
+                            500: '#00529C',
                             600: '#00407a',
                         }
                     },
@@ -42,71 +43,141 @@
             font-family: 'Inter', sans-serif;
             background-color: #f8fafc;
             color: #1e293b;
+            overflow-x: hidden;
         }
+        
         .glass-header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
+
+        /* CUSTOM ANIMATIONS & KEYFRAMES */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(218, 37, 28, 0.6); }
+            50% { box-shadow: 0 0 0 12px rgba(218, 37, 28, 0); }
+        }
+
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
+        }
+
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .pulse-glow {
+            animation: pulseGlow 2s infinite;
+        }
+
+        /* SCROLL REVEAL ANIMATIONS (INTERSECTION OBSERVER) */
+        .reveal {
+            opacity: 0;
+            transform: translateY(35px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.92);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+
+        .reveal.active, .reveal-left.active, .reveal-right.active, .reveal-scale.active {
+            opacity: 1;
+            transform: translateY(0) translateX(0) scale(1);
+        }
+
+        /* DELAY CLASSES FOR STAGGERED REVEALS */
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+        .delay-400 { transition-delay: 400ms; }
+
+        /* CARD HOVER EFFECTS */
+        .card-img-zoom {
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card-hover:hover .card-img-zoom {
+            transform: scale(1.08);
+        }
+
+        /* CUSTOM SCROLLBAR */
         ::-webkit-scrollbar {
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: #f1f5f9;
         }
         ::-webkit-scrollbar-thumb {
             background: #da251c;
             border-radius: 4px;
         }
-        .card-img-zoom {
-            transition: transform 0.4s ease;
-        }
-        .card-hover:hover .card-img-zoom {
-            transform: scale(1.05);
-        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
-    <!-- Header / Navigation Bar -->
-    <header class="sticky top-0 z-40 glass-header border-b border-slate-200 shadow-sm">
+    <!-- Sticky Navigation Header -->
+    <header class="sticky top-0 z-40 glass-header border-b border-slate-200/80 shadow-xs transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 sm:h-20">
-                <!-- Brand / Logo -->
+                <!-- Logo & Brand Title -->
                 <a href="#" class="flex items-center space-x-3 group">
-                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-redcross-600 rounded-xl flex items-center justify-center shadow-md transition-transform group-hover:scale-105 shrink-0">
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-redcross-600 rounded-2xl flex items-center justify-center shadow-md shadow-redcross-600/30 transition-transform duration-300 group-hover:scale-105 shrink-0">
                         <div class="relative w-6 h-6 flex items-center justify-center">
                             <div class="absolute w-5 h-1.5 bg-white rounded-xs"></div>
                             <div class="absolute w-1.5 h-5 bg-white rounded-xs"></div>
                         </div>
                     </div>
                     <div class="flex flex-col">
-                        <span class="font-extrabold text-slate-900 tracking-tight leading-tight text-base sm:text-lg">HỘI CHỮ THẬP ĐỎ VIỆT NAM</span>
-                        <span class="text-xs text-redcross-600 font-bold tracking-wide uppercase">80 Năm Hành Trình Nhân Đạo (1946 - 2026)</span>
+                        <span class="font-black text-slate-900 tracking-tight leading-none text-base sm:text-lg">HỘI CHỮ THẬP ĐỎ VIỆT NAM</span>
+                        <span class="text-[11px] text-redcross-600 font-extrabold tracking-wider uppercase mt-1">80 Năm Hành Trình Nhân Đạo (1946 - 2026)</span>
                     </div>
                 </a>
 
                 <!-- Desktop Navigation Links -->
                 <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 text-sm font-semibold">
-                    <a href="#trang-chu" class="px-3 py-2 rounded-lg text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition">Trang chủ</a>
-                    <a href="#7-linh-vuc" class="px-3 py-2 rounded-lg text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition">7 Lĩnh vực</a>
-                    <a href="#lich-su" class="px-3 py-2 rounded-lg text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition">Lịch sử 80 năm</a>
-                    <a href="#nguyen-tac" class="px-3 py-2 rounded-lg text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition">Nguyên tắc & Biểu tượng</a>
-                    <a href="#tra-cuu" class="px-3 py-2 rounded-lg text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition">Tra cứu Luật</a>
+                    <a href="#trang-chu" class="px-3 py-2 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition duration-200">Trang chủ</a>
+                    <a href="#7-linh-vuc" class="px-3 py-2 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition duration-200">7 Lĩnh vực</a>
+                    <a href="#lich-su" class="px-3 py-2 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition duration-200">Lịch sử 80 năm</a>
+                    <a href="#nguyen-tac" class="px-3 py-2 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition duration-200">Nguyên tắc & Biểu tượng</a>
+                    <a href="#tra-cuu" class="px-3 py-2 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-redcross-50 transition duration-200">Tra cứu Luật</a>
                 </nav>
 
-                <!-- Mobile Menu Button -->
+                <!-- Mobile Navigation Toggle -->
                 <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" type="button" class="p-2 rounded-lg text-slate-700 hover:text-redcross-600 hover:bg-slate-100 focus:outline-none" aria-label="Toggle Navigation">
-                        <i id="menu-icon" class="fa-solid fa-bars text-2xl"></i>
+                    <button id="mobile-menu-btn" type="button" class="p-2.5 rounded-xl text-slate-700 hover:text-redcross-600 hover:bg-slate-100 focus:outline-none transition" aria-label="Toggle Navigation">
+                        <i id="menu-icon" class="fa-solid fa-bars text-xl"></i>
                     </button>
                 </div>
             </div>
         </div>
 
         <!-- Mobile Navigation Drawer -->
-        <div id="mobile-menu" class="hidden md:hidden border-b border-slate-200 bg-white px-4 pt-2 pb-4 space-y-1 shadow-lg">
-            <a href="#trang-chu" class="mobile-link block px-3 py-2.5 rounded-lg text-base font-semibold text-slate-700 hover:bg-redcross-50 hover:text-redcross-600">Trang chủ</a>
-            <a href="#7-linh-vuc" class="mobile-link block px-3 py-2.5 rounded-lg text-base font-semibold text-slate-700 hover:bg-redcross-50 hover:text-redcross-600">7 Lĩnh vực hoạt động</a>
+        <div id="mobile-menu" class="hidden md:hidden border-b border-slate-200 bg-white/95 backdrop-blur-md px-4 pt-2 pb-4 space-y-1 shadow-lg transition-all duration-300">
+            <a href="#trang-chu" class="mobile-link block px-3 py-2.5 rounded-xl text-base font-semibold text-slate-700 hover:bg-redcross-50 hover:text-redcross-600">Trang chủ</a>
+            <a href="#7-linh-vuc" class="mobile-link block px-3 py-2.5 rounded-xl text-base font-semibold text-slate-700 hover:bg-redcross-50 hover:text-redcross-600">7 Lĩnh vực hoạt động</a>
             <a href="#lich-su" class="mobile-link block px-3 py-2.5 rounded-lg text-base font-semibold text-slate-700 hover:bg-redcross-50 hover:text-redcross-600">Lịch sử 80 năm hình thành</a>
             <a href="#nguyen-tac" class="mobile-link block px-3 py-2.5 rounded-lg text-base font-semibold text-slate-700 hover:bg-redcross-50 hover:text-redcross-600">Nguyên tắc & Biểu tượng</a>
             <a href="#tra-cuu" class="mobile-link block px-3 py-2.5 rounded-lg text-base font-semibold text-slate-700 hover:bg-redcross-50 hover:text-redcross-600">Tra cứu Điều luật</a>
@@ -115,282 +186,284 @@
 
     <main class="flex-grow">
         <!-- Hero Banner Section -->
-        <section id="trang-chu" class="relative bg-gradient-to-br from-redcross-800 via-redcross-600 to-redcross-700 text-white overflow-hidden py-16 sm:py-24">
-            <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:20px_20px]"></div>
+        <section id="trang-chu" class="relative bg-gradient-to-br from-redcross-900 via-redcross-700 to-redcross-600 text-white overflow-hidden py-20 sm:py-28">
+            <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#fff_1.5px,transparent_1.5px)] [background-size:24px_24px]"></div>
             
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-                <div class="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full text-xs sm:text-sm font-bold mb-6 border border-white/30 shadow-sm">
-                    <i class="fa-solid fa-award text-amber-300"></i>
+                <!-- Floating Celebration Badge -->
+                <div class="inline-flex items-center space-x-2 bg-white/15 backdrop-blur-md px-4 py-2 rounded-full text-xs sm:text-sm font-bold mb-6 border border-white/25 shadow-lg animate-float">
+                    <i class="fa-solid fa-award text-amber-300 text-base"></i>
                     <span>Kỷ niệm 80 Năm Thành Lập Hội Chữ Thập Đỏ Việt Nam (23/11/1946 - 23/11/2026)</span>
                 </div>
 
-                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight max-w-5xl mx-auto leading-tight sm:leading-none">
+                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight max-w-5xl mx-auto leading-tight sm:leading-none reveal">
                     CHỮ THẬP ĐỎ VIỆT NAM<br>
-                    <span class="text-amber-300">VÌ MỌI NƯỜI, Ở MỌI NƠI</span>
+                    <span class="text-amber-300 drop-shadow-md">VÌ MỌI NƯỜI, Ở MỌI NƠI</span>
                 </h1>
 
-                <p class="mt-6 text-base sm:text-xl font-medium text-redcross-100 max-w-3xl mx-auto leading-relaxed">
+                <p class="mt-6 text-base sm:text-xl font-medium text-redcross-100 max-w-3xl mx-auto leading-relaxed reveal delay-100">
                     Cổng thông tin tuyên truyền pháp luật theo <strong>Luật Hoạt động Chữ thập đỏ số 11/2008/QH12</strong> và tôn vinh truyền thống nhân ái cao đẹp của dân tộc Việt Nam.
                 </p>
 
-                <div class="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
-                    <a href="#7-linh-vuc" class="w-full sm:w-auto px-8 py-3.5 bg-white text-redcross-700 hover:bg-slate-100 font-extrabold rounded-xl shadow-xl transition transform hover:-translate-y-0.5 flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-heart-pulse text-redcross-600 text-lg"></i>
+                <!-- Hero Action Buttons -->
+                <div class="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4 reveal delay-200">
+                    <a href="#7-linh-vuc" class="w-full sm:w-auto px-8 py-4 bg-white text-redcross-700 hover:bg-slate-100 font-black rounded-2xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1 flex items-center justify-center space-x-2 group">
+                        <i class="fa-solid fa-heart-pulse text-redcross-600 text-lg group-hover:scale-110 transition"></i>
                         <span>Khám phá 7 Lĩnh vực hoạt động</span>
                     </a>
-                    <a href="#lich-su" class="w-full sm:w-auto px-8 py-3.5 bg-redcross-900/80 hover:bg-redcross-900 text-white font-bold rounded-xl border border-white/30 backdrop-blur-sm transition flex items-center justify-center space-x-2">
-                        <i class="fa-solid fa-timeline"></i>
+                    <a href="#lich-su" class="w-full sm:w-auto px-8 py-4 bg-redcross-950/80 hover:bg-redcross-950 text-white font-bold rounded-2xl border border-white/25 backdrop-blur-sm transition transform hover:-translate-y-1 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-timeline text-amber-300"></i>
                         <span>Xem Lịch sử hình thành</span>
                     </a>
                 </div>
 
-                <!-- Quick Key Metrics -->
-                <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto text-center pt-8 border-t border-white/20">
-                    <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
-                        <div class="text-2xl sm:text-3xl font-extrabold text-amber-300">23/11/1946</div>
-                        <div class="text-xs text-redcross-100 mt-1 font-medium">Ngày thành lập Hội</div>
+                <!-- Quick Key Metrics Grid -->
+                <div class="mt-14 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto text-center pt-8 border-t border-white/20 reveal delay-300">
+                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15 hover:bg-white/15 transition duration-300">
+                        <div class="text-2xl sm:text-3xl font-black text-amber-300">23/11/1946</div>
+                        <div class="text-xs text-redcross-100 mt-1 font-semibold">Ngày thành lập Hội</div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
-                        <div class="text-2xl sm:text-3xl font-extrabold text-amber-300">7 Lĩnh vực</div>
-                        <div class="text-xs text-redcross-100 mt-1 font-medium">Hoạt động cốt lõi</div>
+                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15 hover:bg-white/15 transition duration-300">
+                        <div class="text-2xl sm:text-3xl font-black text-amber-300">7 Lĩnh vực</div>
+                        <div class="text-xs text-redcross-100 mt-1 font-semibold">Hoạt động cốt lõi</div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
-                        <div class="text-2xl sm:text-3xl font-extrabold text-amber-300">Luật 11/2008</div>
-                        <div class="text-xs text-redcross-100 mt-1 font-medium">Căn cứ pháp lý</div>
+                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15 hover:bg-white/15 transition duration-300">
+                        <div class="text-2xl sm:text-3xl font-black text-amber-300">Luật 11/2008</div>
+                        <div class="text-xs text-redcross-100 mt-1 font-semibold">Căn cứ pháp lý</div>
                     </div>
-                    <div class="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/10">
-                        <div class="text-2xl sm:text-3xl font-extrabold text-amber-300">100%</div>
-                        <div class="text-xs text-redcross-100 mt-1 font-medium">Tự nguyện & Nhân đạo</div>
+                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15 hover:bg-white/15 transition duration-300">
+                        <div class="text-2xl sm:text-3xl font-black text-amber-300">100%</div>
+                        <div class="text-xs text-redcross-100 mt-1 font-semibold">Tự nguyện & Nhân đạo</div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SECTION: 7 LĨNH VỰC HOẠT ĐỘNG TRỌNG TÂM (CÓ HÌNH ÁNH MINH HỌA MINH HOẠ) -->
-        <section id="7-linh-vuc" class="py-16 bg-slate-100">
+        <!-- SECTION: 7 LĨNH VỰC HOẠT ĐỘNG TRỌNG TÂM -->
+        <section id="7-linh-vuc" class="py-20 bg-slate-100">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12">
-                    <span class="text-xs font-bold text-redcross-600 uppercase tracking-widest bg-redcross-100 px-3 py-1 rounded-full">Điều 2 & Điều 7 - 13 Luật Chữ Thập Đỏ</span>
-                    <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-slate-900">7 Lĩnh Vực Hoạt Động Trọng Tâm</h2>
+                <div class="text-center mb-14 reveal">
+                    <span class="text-xs font-black text-redcross-600 uppercase tracking-widest bg-redcross-100 px-3.5 py-1.5 rounded-full border border-redcross-200">Điều 2 & Điều 7 - 13 Luật Chữ Thập Đỏ</span>
+                    <h2 class="mt-4 text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">7 Lĩnh Vực Hoạt Động Trọng Tâm</h2>
                     <p class="text-sm sm:text-base text-slate-600 mt-2 max-w-2xl mx-auto">Các hoạt động nhân đạo dựa vào cộng đồng được pháp luật quy định và Hội Chữ thập đỏ Việt Nam triển khai trên toàn quốc</p>
                     <div class="w-20 h-1.5 bg-redcross-600 mx-auto mt-4 rounded-full"></div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     
-                    <!-- Lĩnh vực 1: Cứu trợ khẩn cấp & Trợ giúp nhân đạo -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between card-hover hover:shadow-xl transition duration-300">
+                    <!-- Lĩnh vực 1 -->
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between card-hover hover:shadow-2xl transition-all duration-300 reveal delay-100">
                         <div>
-                            <div class="relative h-48 w-full overflow-hidden">
+                            <div class="relative h-52 w-full overflow-hidden">
                                 <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop" 
                                      alt="Cứu trợ khẩn cấp và trợ giúp nhân đạo" 
                                      class="w-full h-full object-cover card-img-zoom"
                                      onerror="this.src='https://placehold.co/600x400/ef4444/ffffff?text=Cuu+Tro+Khan+Cap'">
-                                <div class="absolute top-3 left-3 bg-redcross-600 text-white text-xs font-extrabold px-3 py-1 rounded-lg shadow">
+                                <div class="absolute top-3 left-3 bg-redcross-600 text-white text-xs font-black px-3 py-1 rounded-xl shadow-md">
                                     Điều 7
                                 </div>
                             </div>
-                            <div class="p-6">
-                                <div class="flex items-center space-x-2 text-redcross-600 font-bold text-xs uppercase mb-2">
+                            <div class="p-6 sm:p-7">
+                                <div class="flex items-center space-x-2 text-redcross-600 font-extrabold text-xs uppercase mb-2">
                                     <i class="fa-solid fa-hand-holding-heart"></i>
                                     <span>Lĩnh vực 1</span>
                                 </div>
-                                <h3 class="text-xl font-extrabold text-slate-900 mb-2">Cứu trợ khẩn cấp & Trợ giúp nhân đạo</h3>
+                                <h3 class="text-xl font-black text-slate-900 mb-2 leading-snug">Cứu trợ khẩn cấp & Trợ giúp nhân đạo</h3>
                                 <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
                                     Hỗ trợ kịp thời tiền, hiện vật, tâm lý cho nạn nhân thiên tai, dịch bệnh, hỏa hoạn, tai nạn giao thông; trợ giúp kinh phí học nghề, khám chữa bệnh cho người nghèo, người khuyết tật, trẻ mồ côi.
                                 </p>
                             </div>
                         </div>
-                        <div class="p-6 pt-0">
-                            <button onclick="openModal('modal-d7')" class="w-full py-2.5 bg-redcross-50 hover:bg-redcross-600 text-redcross-700 hover:text-white font-bold text-xs rounded-xl transition flex items-center justify-center space-x-2">
+                        <div class="p-6 sm:p-7 pt-0">
+                            <button onclick="openModal('modal-d7')" class="w-full py-3 bg-redcross-50 hover:bg-redcross-600 text-redcross-700 hover:text-white font-bold text-xs rounded-2xl transition duration-200 flex items-center justify-center space-x-2">
                                 <span>Chi tiết Điều 7</span>
-                                <i class="fa-solid fa-arrow-right"></i>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Lĩnh vực 2: Chăm sóc sức khỏe cộng đồng -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between card-hover hover:shadow-xl transition duration-300">
+                    <!-- Lĩnh vực 2 -->
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between card-hover hover:shadow-2xl transition-all duration-300 reveal delay-200">
                         <div>
-                            <div class="relative h-48 w-full overflow-hidden">
+                            <div class="relative h-52 w-full overflow-hidden">
                                 <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=800&auto=format&fit=crop" 
                                      alt="Chăm sóc sức khỏe cộng đồng" 
                                      class="w-full h-full object-cover card-img-zoom"
                                      onerror="this.src='https://placehold.co/600x400/ef4444/ffffff?text=Cham+Soc+Suc+Khoe'">
-                                <div class="absolute top-3 left-3 bg-blue-600 text-white text-xs font-extrabold px-3 py-1 rounded-lg shadow">
+                                <div class="absolute top-3 left-3 bg-blue-600 text-white text-xs font-black px-3 py-1 rounded-xl shadow-md">
                                     Điều 8
                                 </div>
                             </div>
-                            <div class="p-6">
-                                <div class="flex items-center space-x-2 text-blue-600 font-bold text-xs uppercase mb-2">
+                            <div class="p-6 sm:p-7">
+                                <div class="flex items-center space-x-2 text-blue-600 font-extrabold text-xs uppercase mb-2">
                                     <i class="fa-solid fa-user-doctor"></i>
                                     <span>Lĩnh vực 2</span>
                                 </div>
-                                <h3 class="text-xl font-extrabold text-slate-900 mb-2">Chăm sóc sức khỏe cộng đồng</h3>
+                                <h3 class="text-xl font-black text-slate-900 mb-2 leading-snug">Chăm sóc sức khỏe cộng đồng</h3>
                                 <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
                                     Tuyên truyền kiến thức y tế phòng dịch, hướng dẫn nhân dân tự chăm sóc sức khỏe, đào tạo lực lượng tình nguyện viên y tế và tổ chức các đoàn khám chữa bệnh nhân đạo lưu động.
                                 </p>
                             </div>
                         </div>
-                        <div class="p-6 pt-0">
-                            <button onclick="openModal('modal-d8')" class="w-full py-2.5 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white font-bold text-xs rounded-xl transition flex items-center justify-center space-x-2">
+                        <div class="p-6 sm:p-7 pt-0">
+                            <button onclick="openModal('modal-d8')" class="w-full py-3 bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white font-bold text-xs rounded-2xl transition duration-200 flex items-center justify-center space-x-2">
                                 <span>Chi tiết Điều 8</span>
-                                <i class="fa-solid fa-arrow-right"></i>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Lĩnh vực 3: Sơ cấp cứu ban đầu -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between card-hover hover:shadow-xl transition duration-300">
+                    <!-- Lĩnh vực 3 -->
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between card-hover hover:shadow-2xl transition-all duration-300 reveal delay-300">
                         <div>
-                            <div class="relative h-48 w-full overflow-hidden">
+                            <div class="relative h-52 w-full overflow-hidden">
                                 <img src="https://images.unsplash.com/photo-1603398938378-e54eab446dde?q=80&w=800&auto=format&fit=crop" 
                                      alt="Sơ cấp cứu ban đầu" 
                                      class="w-full h-full object-cover card-img-zoom"
                                      onerror="this.src='https://placehold.co/600x400/ef4444/ffffff?text=So+Cap+Cuu'">
-                                <div class="absolute top-3 left-3 bg-emerald-600 text-white text-xs font-extrabold px-3 py-1 rounded-lg shadow">
+                                <div class="absolute top-3 left-3 bg-emerald-600 text-white text-xs font-black px-3 py-1 rounded-xl shadow-md">
                                     Điều 9
                                 </div>
                             </div>
-                            <div class="p-6">
-                                <div class="flex items-center space-x-2 text-emerald-600 font-bold text-xs uppercase mb-2">
+                            <div class="p-6 sm:p-7">
+                                <div class="flex items-center space-x-2 text-emerald-600 font-extrabold text-xs uppercase mb-2">
                                     <i class="fa-solid fa-kit-medical"></i>
                                     <span>Lĩnh vực 3</span>
                                 </div>
-                                <h3 class="text-xl font-extrabold text-slate-900 mb-2">Sơ cấp cứu ban đầu</h3>
+                                <h3 class="text-xl font-black text-slate-900 mb-2 leading-snug">Sơ cấp cứu ban đầu</h3>
                                 <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
                                     Thực hiện sơ cấp cứu tại chỗ cho nạn nhân tai nạn giao thông, thảm họa, thiên tai; tổ chức điểm/trạm sơ cấp cứu trên các tuyến giao thông trọng điểm và huấn luyện kỹ năng sơ cứu cho cộng đồng.
                                 </p>
                             </div>
                         </div>
-                        <div class="p-6 pt-0">
-                            <button onclick="openModal('modal-d9')" class="w-full py-2.5 bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white font-bold text-xs rounded-xl transition flex items-center justify-center space-x-2">
+                        <div class="p-6 sm:p-7 pt-0">
+                            <button onclick="openModal('modal-d9')" class="w-full py-3 bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white font-bold text-xs rounded-2xl transition duration-200 flex items-center justify-center space-x-2">
                                 <span>Chi tiết Điều 9</span>
-                                <i class="fa-solid fa-arrow-right"></i>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Lĩnh vực 4: Hiến máu, mô, bộ phận cơ thể & hiến xác -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between card-hover hover:shadow-xl transition duration-300">
+                    <!-- Lĩnh vực 4 -->
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between card-hover hover:shadow-2xl transition-all duration-300 reveal delay-100">
                         <div>
-                            <div class="relative h-48 w-full overflow-hidden">
+                            <div class="relative h-52 w-full overflow-hidden">
                                 <img src="https://images.unsplash.com/photo-1615461066841-6116e61058f4?q=80&w=800&auto=format&fit=crop" 
                                      alt="Hiến máu nhân đạo" 
                                      class="w-full h-full object-cover card-img-zoom"
                                      onerror="this.src='https://placehold.co/600x400/ef4444/ffffff?text=Hien+Mau+Nhan+Dao'">
-                                <div class="absolute top-3 left-3 bg-rose-600 text-white text-xs font-extrabold px-3 py-1 rounded-lg shadow">
+                                <div class="absolute top-3 left-3 bg-rose-600 text-white text-xs font-black px-3 py-1 rounded-xl shadow-md">
                                     Điều 10
                                 </div>
                             </div>
-                            <div class="p-6">
-                                <div class="flex items-center space-x-2 text-rose-600 font-bold text-xs uppercase mb-2">
+                            <div class="p-6 sm:p-7">
+                                <div class="flex items-center space-x-2 text-rose-600 font-extrabold text-xs uppercase mb-2">
                                     <i class="fa-solid fa-droplet"></i>
                                     <span>Lĩnh vực 4</span>
                                 </div>
-                                <h3 class="text-xl font-extrabold text-slate-900 mb-2">Hiến máu, mô, tạng & hiến xác</h3>
+                                <h3 class="text-xl font-black text-slate-900 mb-2 leading-snug">Hiến máu, mô, tạng & hiến xác</h3>
                                 <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
                                     Tuyên truyền, vận động và tổ chức các chiến dịch hiến máu tình nguyện đáp ứng nguồn máu chữa bệnh; tuyên truyền ý nghĩa nhân văn cao đẹp của việc đăng ký hiến mô, tạng và hiến xác cho y học.
                                 </p>
                             </div>
                         </div>
-                        <div class="p-6 pt-0">
-                            <button onclick="openModal('modal-d10')" class="w-full py-2.5 bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white font-bold text-xs rounded-xl transition flex items-center justify-center space-x-2">
+                        <div class="p-6 sm:p-7 pt-0">
+                            <button onclick="openModal('modal-d10')" class="w-full py-3 bg-rose-50 hover:bg-rose-600 text-rose-700 hover:text-white font-bold text-xs rounded-2xl transition duration-200 flex items-center justify-center space-x-2">
                                 <span>Chi tiết Điều 10</span>
-                                <i class="fa-solid fa-arrow-right"></i>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Lĩnh vực 5: Tìm kiếm tin tức thân nhân thất lạc -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between card-hover hover:shadow-xl transition duration-300">
+                    <!-- Lĩnh vực 5 -->
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between card-hover hover:shadow-2xl transition-all duration-300 reveal delay-200">
                         <div>
-                            <div class="relative h-48 w-full overflow-hidden">
+                            <div class="relative h-52 w-full overflow-hidden">
                                 <img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=800&auto=format&fit=crop" 
                                      alt="Tìm kiếm tin tức thân nhân thất lạc" 
                                      class="w-full h-full object-cover card-img-zoom"
                                      onerror="this.src='https://placehold.co/600x400/ef4444/ffffff?text=Tim+Kiem+Than+Nhan'">
-                                <div class="absolute top-3 left-3 bg-amber-600 text-white text-xs font-extrabold px-3 py-1 rounded-lg shadow">
+                                <div class="absolute top-3 left-3 bg-amber-600 text-white text-xs font-black px-3 py-1 rounded-xl shadow-md">
                                     Điều 11
                                 </div>
                             </div>
-                            <div class="p-6">
-                                <div class="flex items-center space-x-2 text-amber-600 font-bold text-xs uppercase mb-2">
+                            <div class="p-6 sm:p-7">
+                                <div class="flex items-center space-x-2 text-amber-600 font-extrabold text-xs uppercase mb-2">
                                     <i class="fa-solid fa-people-roof"></i>
                                     <span>Lĩnh vực 5</span>
                                 </div>
-                                <h3 class="text-xl font-extrabold text-slate-900 mb-2">Tìm kiếm tin tức thân nhân thất lạc</h3>
+                                <h3 class="text-xl font-black text-slate-900 mb-2 leading-snug">Tìm kiếm tin tức thân nhân thất lạc</h3>
                                 <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
                                     Thu thập, xử lý thông tin, hỗ trợ trao đổi thông tin liên lạc và hướng dẫn thủ tục giúp các gia đình thất lạc do chiến tranh, thiên tai, thảm họa sớm tìm lại người thân và đoàn tụ.
                                 </p>
                             </div>
                         </div>
-                        <div class="p-6 pt-0">
-                            <button onclick="openModal('modal-d11')" class="w-full py-2.5 bg-amber-50 hover:bg-amber-600 text-amber-700 hover:text-white font-bold text-xs rounded-xl transition flex items-center justify-center space-x-2">
+                        <div class="p-6 sm:p-7 pt-0">
+                            <button onclick="openModal('modal-d11')" class="w-full py-3 bg-amber-50 hover:bg-amber-600 text-amber-700 hover:text-white font-bold text-xs rounded-2xl transition duration-200 flex items-center justify-center space-x-2">
                                 <span>Chi tiết Điều 11</span>
-                                <i class="fa-solid fa-arrow-right"></i>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Lĩnh vực 6: Tuyên truyền giá trị nhân đạo -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between card-hover hover:shadow-xl transition duration-300">
+                    <!-- Lĩnh vực 6 -->
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between card-hover hover:shadow-2xl transition-all duration-300 reveal delay-300">
                         <div>
-                            <div class="relative h-48 w-full overflow-hidden">
+                            <div class="relative h-52 w-full overflow-hidden">
                                 <img src="https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=800&auto=format&fit=crop" 
                                      alt="Tuyên truyền các giá trị nhân đạo" 
                                      class="w-full h-full object-cover card-img-zoom"
                                      onerror="this.src='https://placehold.co/600x400/ef4444/ffffff?text=Gia+Tri+Nhan+Dao'">
-                                <div class="absolute top-3 left-3 bg-indigo-600 text-white text-xs font-extrabold px-3 py-1 rounded-lg shadow">
+                                <div class="absolute top-3 left-3 bg-indigo-600 text-white text-xs font-black px-3 py-1 rounded-xl shadow-md">
                                     Điều 12
                                 </div>
                             </div>
-                            <div class="p-6">
-                                <div class="flex items-center space-x-2 text-indigo-600 font-bold text-xs uppercase mb-2">
+                            <div class="p-6 sm:p-7">
+                                <div class="flex items-center space-x-2 text-indigo-600 font-extrabold text-xs uppercase mb-2">
                                     <i class="fa-solid fa-bullhorn"></i>
                                     <span>Lĩnh vực 6</span>
                                 </div>
-                                <h3 class="text-xl font-extrabold text-slate-900 mb-2">Tuyên truyền các giá trị nhân đạo</h3>
+                                <h3 class="text-xl font-black text-slate-900 mb-2 leading-snug">Tuyên truyền các giá trị nhân đạo</h3>
                                 <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
                                     Nâng cao nhận thức về truyền thống nhân ái thương người của dân tộc Việt Nam; phổ biến chính sách pháp luật Chữ thập đỏ, Luật Nhân đạo Quốc tế và các nguyên tắc của Phong trào.
                                 </p>
                             </div>
                         </div>
-                        <div class="p-6 pt-0">
-                            <button onclick="openModal('modal-d12')" class="w-full py-2.5 bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white font-bold text-xs rounded-xl transition flex items-center justify-center space-x-2">
+                        <div class="p-6 sm:p-7 pt-0">
+                            <button onclick="openModal('modal-d12')" class="w-full py-3 bg-indigo-50 hover:bg-indigo-600 text-indigo-700 hover:text-white font-bold text-xs rounded-2xl transition duration-200 flex items-center justify-center space-x-2">
                                 <span>Chi tiết Điều 12</span>
-                                <i class="fa-solid fa-arrow-right"></i>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
                             </button>
                         </div>
                     </div>
 
-                    <!-- Lĩnh vực 7: Phòng ngừa & Ứng phó thảm họa -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col justify-between card-hover hover:shadow-xl transition duration-300 md:col-span-2 lg:col-span-1">
+                    <!-- Lĩnh vực 7 -->
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200/80 overflow-hidden flex flex-col justify-between card-hover hover:shadow-2xl transition-all duration-300 md:col-span-2 lg:col-span-1 reveal delay-100">
                         <div>
-                            <div class="relative h-48 w-full overflow-hidden">
+                            <div class="relative h-52 w-full overflow-hidden">
                                 <img src="https://images.unsplash.com/photo-1547683905-f686c993aae5?q=80&w=800&auto=format&fit=crop" 
                                      alt="Phòng ngừa và ứng phó thảm họa" 
                                      class="w-full h-full object-cover card-img-zoom"
                                      onerror="this.src='https://placehold.co/600x400/ef4444/ffffff?text=Ung+Pho+Tham+Hoa'">
-                                <div class="absolute top-3 left-3 bg-purple-600 text-white text-xs font-extrabold px-3 py-1 rounded-lg shadow">
+                                <div class="absolute top-3 left-3 bg-purple-600 text-white text-xs font-black px-3 py-1 rounded-xl shadow-md">
                                     Điều 13
                                 </div>
                             </div>
-                            <div class="p-6">
-                                <div class="flex items-center space-x-2 text-purple-600 font-bold text-xs uppercase mb-2">
+                            <div class="p-6 sm:p-7">
+                                <div class="flex items-center space-x-2 text-purple-600 font-extrabold text-xs uppercase mb-2">
                                     <i class="fa-solid fa-shield-halved"></i>
                                     <span>Lĩnh vực 7</span>
                                 </div>
-                                <h3 class="text-xl font-extrabold text-slate-900 mb-2">Phòng ngừa & Ứng phó thảm họa</h3>
+                                <h3 class="text-xl font-black text-slate-900 mb-2 leading-snug">Phòng ngừa & Ứng phó thảm họa</h3>
                                 <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
                                     Huấn luyện kỹ năng ứng phó bão lũ thiên tai, chuẩn bị lực lượng vật tư cứu hộ, phối hợp sơ tán người dân vùng nguy hiểm và hỗ trợ tái thiết, phục hồi cộng đồng sau thảm họa.
                                 </p>
                             </div>
                         </div>
-                        <div class="p-6 pt-0">
-                            <button onclick="openModal('modal-d13')" class="w-full py-2.5 bg-purple-50 hover:bg-purple-600 text-purple-700 hover:text-white font-bold text-xs rounded-xl transition flex items-center justify-center space-x-2">
+                        <div class="p-6 sm:p-7 pt-0">
+                            <button onclick="openModal('modal-d13')" class="w-full py-3 bg-purple-50 hover:bg-purple-600 text-purple-700 hover:text-white font-bold text-xs rounded-2xl transition duration-200 flex items-center justify-center space-x-2">
                                 <span>Chi tiết Điều 13</span>
-                                <i class="fa-solid fa-arrow-right"></i>
+                                <i class="fa-solid fa-arrow-right text-xs"></i>
                             </button>
                         </div>
                     </div>
@@ -400,158 +473,158 @@
         </section>
 
         <!-- SECTION: TIMELINE LỊCH SỬ HÌNH THÀNH (16 MỐC NỔI BẬT) -->
-        <section id="lich-su" class="py-16 bg-white">
+        <section id="lich-su" class="py-20 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-10">
-                    <span class="text-xs font-bold text-redcross-600 uppercase tracking-widest bg-redcross-100 px-3 py-1 rounded-full">Truyền thống 80 năm lịch sử</span>
-                    <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-slate-900">Lịch Sử Hình Thành & Phát Triển</h2>
+                <div class="text-center mb-12 reveal">
+                    <span class="text-xs font-black text-redcross-600 uppercase tracking-widest bg-redcross-100 px-3.5 py-1.5 rounded-full border border-redcross-200">Truyền thống 80 năm lịch sử</span>
+                    <h2 class="mt-4 text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">Lịch Sử Hình Thành & Phát Triển</h2>
                     <p class="text-sm text-slate-600 mt-2 max-w-2xl mx-auto">Từ ngày thành lập 23/11/1946 dưới sự sáng lập và làm Chủ tịch danh dự của Chủ tịch Hồ Chí Minh</p>
                     <div class="w-20 h-1.5 bg-redcross-600 mx-auto mt-4 rounded-full"></div>
                 </div>
 
                 <!-- Era Filter Buttons -->
-                <div class="flex flex-wrap justify-center gap-2 mb-10">
-                    <button id="btn-era-all" onclick="filterTimeline('all')" class="era-btn px-4 py-2 text-xs font-bold rounded-full bg-redcross-600 text-white shadow-sm transition">
+                <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-12 reveal delay-100">
+                    <button id="btn-era-all" onclick="filterTimeline('all')" class="era-btn px-5 py-2.5 text-xs font-extrabold rounded-full bg-redcross-600 text-white shadow-md shadow-redcross-600/20 transition duration-200 transform hover:scale-105">
                         Tất cả các mốc (16)
                     </button>
-                    <button id="btn-era-1" onclick="filterTimeline('1946-1975')" class="era-btn px-4 py-2 text-xs font-bold rounded-full bg-white text-slate-700 hover:bg-redcross-50 border border-slate-200 transition">
+                    <button id="btn-era-1" onclick="filterTimeline('1946-1975')" class="era-btn px-5 py-2.5 text-xs font-extrabold rounded-full bg-white text-slate-700 hover:bg-redcross-50 border border-slate-200 transition duration-200 transform hover:scale-105">
                         1946 - 1975 (Kháng chiến)
                     </button>
-                    <button id="btn-era-2" onclick="filterTimeline('1976-2000')" class="era-btn px-4 py-2 text-xs font-bold rounded-full bg-white text-slate-700 hover:bg-redcross-50 border border-slate-200 transition">
+                    <button id="btn-era-2" onclick="filterTimeline('1976-2000')" class="era-btn px-5 py-2.5 text-xs font-extrabold rounded-full bg-white text-slate-700 hover:bg-redcross-50 border border-slate-200 transition duration-200 transform hover:scale-105">
                         1976 - 2000 (Hợp nhất & Đổi mới)
                     </button>
-                    <button id="btn-era-3" onclick="filterTimeline('2001-now')" class="era-btn px-4 py-2 text-xs font-bold rounded-full bg-white text-slate-700 hover:bg-redcross-50 border border-slate-200 transition">
+                    <button id="btn-era-3" onclick="filterTimeline('2001-now')" class="era-btn px-5 py-2.5 text-xs font-extrabold rounded-full bg-white text-slate-700 hover:bg-redcross-50 border border-slate-200 transition duration-200 transform hover:scale-105">
                         2001 - Nay (Phát triển toàn diện)
                     </button>
                 </div>
 
-                <!-- Timeline Render Container -->
+                <!-- Timeline Container -->
                 <div class="relative">
                     <!-- Central Vertical Line -->
-                    <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-1 bg-redcross-200"></div>
-                    <div class="block md:hidden absolute left-4 top-0 bottom-0 w-1 bg-redcross-200"></div>
+                    <div class="hidden md:block absolute left-1/2 transform -translate-x-1/2 top-0 bottom-0 w-1 bg-redcross-200 rounded-full"></div>
+                    <div class="block md:hidden absolute left-4 top-0 bottom-0 w-1 bg-redcross-200 rounded-full"></div>
 
-                    <div id="timeline-events-container" class="space-y-8">
-                        <!-- Dynamic render by JS -->
+                    <div id="timeline-events-container" class="space-y-8 sm:space-y-10">
+                        <!-- Dynamic render via JS -->
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SECTION: NGUYÊN TẮC HOẠT ĐỘNG, BIỂU TƯỢNG & NGUỒN LỰC -->
-        <section id="nguyen-tac" class="py-16 bg-slate-100">
+        <!-- SECTION: NGUYÊN TẮC HOẠT ĐỘNG, BIỂU TƯỢNG & CƠ CẤU PHÁP LÝ -->
+        <section id="nguyen-tac" class="py-20 bg-slate-100">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-12">
-                    <span class="text-xs font-bold text-redcross-600 uppercase tracking-widest bg-redcross-100 px-3 py-1 rounded-full">Pháp chế Chữ thập đỏ</span>
-                    <h2 class="mt-3 text-3xl sm:text-4xl font-extrabold text-slate-900">Nguyên Tắc, Biểu Tượng & Minh Bạch</h2>
+                <div class="text-center mb-14 reveal">
+                    <span class="text-xs font-black text-redcross-600 uppercase tracking-widest bg-redcross-100 px-3.5 py-1.5 rounded-full border border-redcross-200">Pháp chế Chữ thập đỏ</span>
+                    <h2 class="mt-4 text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">Nguyên Tắc, Biểu Tượng & Cấm Vi Phạm</h2>
                     <div class="w-20 h-1.5 bg-redcross-600 mx-auto mt-4 rounded-full"></div>
                 </div>
 
-                <!-- 5 Nguyên Tắc Vàng (Điều 3) -->
-                <div class="mb-12">
-                    <h3 class="text-xl font-bold text-slate-800 mb-6 text-center">
+                <!-- 5 Gold Principles (Điều 3) -->
+                <div class="mb-14 reveal">
+                    <h3 class="text-xl font-extrabold text-slate-800 mb-6 text-center flex items-center justify-center">
                         <i class="fa-solid fa-star text-amber-500 mr-2"></i>
-                        5 Nguyên Tắc Hoạt Động Cốt Lõi (Điều 3)
+                        <span>5 Nguyên Tắc Hoạt Động Cốt Lõi (Điều 3)</span>
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm text-center">
-                            <div class="w-10 h-10 bg-redcross-100 text-redcross-600 rounded-xl flex items-center justify-center font-bold text-lg mb-3 mx-auto">1</div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm text-center transform hover:-translate-y-1 transition duration-200">
+                            <div class="w-12 h-12 bg-redcross-100 text-redcross-600 rounded-2xl flex items-center justify-center font-black text-lg mb-3 mx-auto">1</div>
                             <h4 class="font-extrabold text-slate-900 text-sm mb-1">Tự nguyện, không vụ lợi</h4>
-                            <p class="text-xs text-slate-600">Xuất phát từ tinh thần thương người, không đòi hỏi trả chi phí.</p>
+                            <p class="text-xs text-slate-600 leading-relaxed">Xuất phát từ tinh thần thương người, không đòi hỏi trả chi phí.</p>
                         </div>
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm text-center">
-                            <div class="w-10 h-10 bg-redcross-100 text-redcross-600 rounded-xl flex items-center justify-center font-bold text-lg mb-3 mx-auto">2</div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm text-center transform hover:-translate-y-1 transition duration-200">
+                            <div class="w-12 h-12 bg-redcross-100 text-redcross-600 rounded-2xl flex items-center justify-center font-black text-lg mb-3 mx-auto">2</div>
                             <h4 class="font-extrabold text-slate-900 text-sm mb-1">Công khai, minh bạch</h4>
-                            <p class="text-xs text-slate-600">Sử dụng đúng mục đích, đúng đối tượng; kịp thời và đạt hiệu quả cao.</p>
+                            <p class="text-xs text-slate-600 leading-relaxed">Sử dụng đúng mục đích, đúng đối tượng; kịp thời và đạt hiệu quả cao.</p>
                         </div>
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm text-center">
-                            <div class="w-10 h-10 bg-redcross-100 text-redcross-600 rounded-xl flex items-center justify-center font-bold text-lg mb-3 mx-auto">3</div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm text-center transform hover:-translate-y-1 transition duration-200">
+                            <div class="w-12 h-12 bg-redcross-100 text-redcross-600 rounded-2xl flex items-center justify-center font-black text-lg mb-3 mx-auto">3</div>
                             <h4 class="font-extrabold text-slate-900 text-sm mb-1">Không phân biệt đối xử</h4>
-                            <p class="text-xs text-slate-600">Cứu trợ dựa trên mức độ khó khăn, phù hợp truyền thống nhân ái.</p>
+                            <p class="text-xs text-slate-600 leading-relaxed">Cứu trợ dựa trên mức độ khó khăn, phù hợp truyền thống nhân ái.</p>
                         </div>
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm text-center">
-                            <div class="w-10 h-10 bg-redcross-100 text-redcross-600 rounded-xl flex items-center justify-center font-bold text-lg mb-3 mx-auto">4</div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm text-center transform hover:-translate-y-1 transition duration-200">
+                            <div class="w-12 h-12 bg-redcross-100 text-redcross-600 rounded-2xl flex items-center justify-center font-black text-lg mb-3 mx-auto">4</div>
                             <h4 class="font-extrabold text-slate-900 text-sm mb-1">Sử dụng đúng biểu tượng</h4>
-                            <p class="text-xs text-slate-600">Tôn trọng và sử dụng đúng quy định biểu tượng Chữ thập đỏ.</p>
+                            <p class="text-xs text-slate-600 leading-relaxed">Tôn trọng và sử dụng đúng quy định biểu tượng Chữ thập đỏ.</p>
                         </div>
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm text-center">
-                            <div class="w-10 h-10 bg-redcross-100 text-redcross-600 rounded-xl flex items-center justify-center font-bold text-lg mb-3 mx-auto">5</div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm text-center transform hover:-translate-y-1 transition duration-200">
+                            <div class="w-12 h-12 bg-redcross-100 text-redcross-600 rounded-2xl flex items-center justify-center font-black text-lg mb-3 mx-auto">5</div>
                             <h4 class="font-extrabold text-slate-900 text-sm mb-1">Tuân thủ Pháp luật</h4>
-                            <p class="text-xs text-slate-600">Tuân thủ quy định pháp luật Việt Nam và Điều ước quốc tế.</p>
+                            <p class="text-xs text-slate-600 leading-relaxed">Tuân thủ quy định pháp luật Việt Nam và Điều ước quốc tế.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- 3 Biểu Tượng Được Bảo Hộ (Điều 14 - 16) -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
-                        <div class="w-20 h-20 bg-slate-50 border border-slate-200 rounded-2xl mx-auto flex items-center justify-center mb-4">
+                <!-- 3 Protected Emblems (Điều 14 - 16) -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14 reveal">
+                    <div class="bg-white p-7 rounded-3xl border border-slate-200/80 shadow-sm text-center hover:shadow-xl transition duration-300">
+                        <div class="w-20 h-20 bg-slate-50 border border-slate-200/80 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-inner">
                             <svg class="w-14 h-14" viewBox="0 0 100 100">
                                 <rect x="35" y="10" width="30" height="80" fill="#da251c" />
                                 <rect x="10" y="35" width="80" height="30" fill="#da251c" />
                             </svg>
                         </div>
-                        <span class="text-xs font-bold text-redcross-600 bg-redcross-50 px-2.5 py-0.5 rounded">Điều 14 & 15</span>
-                        <h4 class="text-base font-extrabold text-slate-900 mt-2 mb-1">Biểu tượng Chữ thập đỏ</h4>
-                        <p class="text-xs text-slate-600">Hình chữ thập màu đỏ trên nền trắng. Là dấu hiệu nhận biết và bảo hộ người, cơ sở, phương tiện thực hiện hoạt động chữ thập đỏ.</p>
+                        <span class="text-xs font-black text-redcross-600 bg-redcross-50 px-3 py-1 rounded-full">Điều 14 & 15</span>
+                        <h4 class="text-lg font-black text-slate-900 mt-2 mb-1">Biểu tượng Chữ thập đỏ</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">Hình chữ thập màu đỏ trên nền trắng. Là dấu hiệu nhận biết và bảo hộ người, cơ sở, phương tiện thực hiện hoạt động chữ thập đỏ.</p>
                     </div>
 
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
-                        <div class="w-20 h-20 bg-slate-50 border border-slate-200 rounded-2xl mx-auto flex items-center justify-center mb-4">
+                    <div class="bg-white p-7 rounded-3xl border border-slate-200/80 shadow-sm text-center hover:shadow-xl transition duration-300">
+                        <div class="w-20 h-20 bg-slate-50 border border-slate-200/80 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-inner">
                             <svg class="w-14 h-14" viewBox="0 0 100 100">
                                 <path d="M 65 15 A 35 35 0 1 0 65 85 A 28 28 0 1 1 65 15 Z" fill="#da251c" />
                             </svg>
                         </div>
-                        <span class="text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded">Điều 16</span>
-                        <h4 class="text-base font-extrabold text-slate-900 mt-2 mb-1">Trăng lưỡi liềm đỏ</h4>
-                        <p class="text-xs text-slate-600">Biểu tượng quốc tế do các tổ chức thuộc Phong trào sử dụng tại các quốc gia Hồi giáo, được pháp luật Việt Nam tôn trọng bảo hộ.</p>
+                        <span class="text-xs font-black text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Điều 16</span>
+                        <h4 class="text-lg font-black text-slate-900 mt-2 mb-1">Trăng lưỡi liềm đỏ</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">Biểu tượng quốc tế do các tổ chức thuộc Phong trào sử dụng tại các quốc gia Hồi giáo, được pháp luật Việt Nam tôn trọng bảo hộ.</p>
                     </div>
 
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm text-center">
-                        <div class="w-20 h-20 bg-slate-50 border border-slate-200 rounded-2xl mx-auto flex items-center justify-center mb-4">
+                    <div class="bg-white p-7 rounded-3xl border border-slate-200/80 shadow-sm text-center hover:shadow-xl transition duration-300">
+                        <div class="w-20 h-20 bg-slate-50 border border-slate-200/80 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-inner">
                             <svg class="w-14 h-14" viewBox="0 0 100 100">
                                 <polygon points="50,10 90,50 50,90 10,50" fill="none" stroke="#da251c" stroke-width="12" />
                             </svg>
                         </div>
-                        <span class="text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded">Điều 16</span>
-                        <h4 class="text-base font-extrabold text-slate-900 mt-2 mb-1">Pha lê đỏ</h4>
-                        <p class="text-xs text-slate-600">Biểu tượng bổ sung trung lập quốc tế của Phong trào Chữ thập đỏ và Trăng lưỡi liềm đỏ Quốc tế, được pháp luật bảo vệ.</p>
+                        <span class="text-xs font-black text-slate-600 bg-slate-100 px-3 py-1 rounded-full">Điều 16</span>
+                        <h4 class="text-lg font-black text-slate-900 mt-2 mb-1">Pha lê đỏ</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">Biểu tượng bổ sung trung lập quốc tế của Phong trào Chữ thập đỏ và Trăng lưỡi liềm đỏ Quốc tế, được pháp luật bảo vệ.</p>
                     </div>
                 </div>
 
                 <!-- Các hành vi bị nghiêm cấm (Điều 6) -->
-                <div class="bg-red-50/80 border border-red-200 rounded-2xl p-6 sm:p-8">
-                    <h3 class="text-lg font-extrabold text-redcross-800 mb-4 flex items-center">
-                        <i class="fa-solid fa-ban text-redcross-600 mr-2"></i>
-                        Các hành vi bị nghiêm cấm theo Điều 6 Luật Chữ thập đỏ
+                <div class="bg-red-50/90 border border-red-200/80 rounded-3xl p-6 sm:p-8 reveal shadow-sm">
+                    <h3 class="text-lg font-black text-redcross-800 mb-4 flex items-center">
+                        <i class="fa-solid fa-ban text-redcross-600 mr-2.5 text-xl"></i>
+                        <span>Các hành vi bị nghiêm cấm theo Điều 6 Luật Chữ thập đỏ</span>
                     </h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs sm:text-sm text-slate-700">
-                        <div class="bg-white p-3 rounded-xl border border-red-100 flex items-start space-x-2">
-                            <span class="font-bold text-redcross-600">1.</span>
+                        <div class="bg-white p-3.5 rounded-2xl border border-red-100 flex items-start space-x-2.5 shadow-xs">
+                            <span class="font-extrabold text-redcross-600 shrink-0">1.</span>
                             <span>Cản trở hoặc ép buộc tổ chức, cá nhân tham gia hoạt động chữ thập đỏ.</span>
                         </div>
-                        <div class="bg-white p-3 rounded-xl border border-red-100 flex items-start space-x-2">
-                            <span class="font-bold text-redcross-600">2.</span>
+                        <div class="bg-white p-3.5 rounded-2xl border border-red-100 flex items-start space-x-2.5 shadow-xs">
+                            <span class="font-extrabold text-redcross-600 shrink-0">2.</span>
                             <span>Cung cấp hàng hóa, dịch vụ không bảo đảm chất lượng gây tổn hại sức khỏe, tính mạng.</span>
                         </div>
-                        <div class="bg-white p-3 rounded-xl border border-red-100 flex items-start space-x-2">
-                            <span class="font-bold text-redcross-600">3.</span>
+                        <div class="bg-white p-3.5 rounded-2xl border border-red-100 flex items-start space-x-2.5 shadow-xs">
+                            <span class="font-extrabold text-redcross-600 shrink-0">3.</span>
                             <span>Báo cáo sai sự thật, gian lận, chiếm đoạt, sử dụng trái phép tiền hiện vật tài trợ.</span>
                         </div>
-                        <div class="bg-white p-3 rounded-xl border border-red-100 flex items-start space-x-2">
-                            <span class="font-bold text-redcross-600">4.</span>
+                        <div class="bg-white p-3.5 rounded-2xl border border-red-100 flex items-start space-x-2.5 shadow-xs">
+                            <span class="font-extrabold text-redcross-600 shrink-0">4.</span>
                             <span>Lợi dụng hoạt động chữ thập đỏ nhằm xâm phạm an ninh quốc gia, trật tự xã hội.</span>
                         </div>
-                        <div class="bg-white p-3 rounded-xl border border-red-100 flex items-start space-x-2">
-                            <span class="font-bold text-redcross-600">5.</span>
+                        <div class="bg-white p-3.5 rounded-2xl border border-red-100 flex items-start space-x-2.5 shadow-xs">
+                            <span class="font-extrabold text-redcross-600 shrink-0">5.</span>
                             <span>Lợi dụng hoạt động chữ thập đỏ để vụ lợi.</span>
                         </div>
-                        <div class="bg-white p-3 rounded-xl border border-red-100 flex items-start space-x-2">
-                            <span class="font-bold text-redcross-600">6.</span>
+                        <div class="bg-white p-3.5 rounded-2xl border border-red-100 flex items-start space-x-2.5 shadow-xs">
+                            <span class="font-extrabold text-redcross-600 shrink-0">6.</span>
                             <span>Yêu cầu người được cứu trợ trả chi phí tiếp nhận, vận chuyển, phân phối hiện vật.</span>
                         </div>
-                        <div class="bg-white p-3 rounded-xl border border-red-100 flex items-start space-x-2 md:col-span-2">
-                            <span class="font-bold text-redcross-600">7.</span>
+                        <div class="bg-white p-3.5 rounded-2xl border border-red-100 flex items-start space-x-2.5 shadow-xs md:col-span-2">
+                            <span class="font-extrabold text-redcross-600 shrink-0">7.</span>
                             <span>Sử dụng biểu tượng chữ thập đỏ trái pháp luật.</span>
                         </div>
                     </div>
@@ -560,41 +633,41 @@
         </section>
 
         <!-- SECTION: TRA CỨU ĐIỀU LUẬT NHANH -->
-        <section id="tra-cuu" class="py-16 bg-white">
+        <section id="tra-cuu" class="py-20 bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="text-center mb-8">
-                    <span class="text-xs font-bold text-redcross-600 uppercase tracking-widest bg-redcross-100 px-3 py-1 rounded-full">Tra cứu văn bản pháp luật</span>
-                    <h2 class="mt-3 text-3xl font-extrabold text-slate-900">Tra Cứu Nội Dung Luật Chữ Thập Đỏ</h2>
+                <div class="text-center mb-10 reveal">
+                    <span class="text-xs font-black text-redcross-600 uppercase tracking-widest bg-redcross-100 px-3.5 py-1.5 rounded-full border border-redcross-200">Tra cứu văn bản pháp luật</span>
+                    <h2 class="mt-4 text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">Tra Cứu Nội Dung Luật Chữ Thập Đỏ</h2>
                     <p class="text-sm text-slate-500 mt-1">Nhập từ khóa tìm kiếm (Ví dụ: "cứu trợ", "hiến máu", "biểu tượng", "minh bạch")...</p>
                 </div>
 
-                <div class="max-w-2xl mx-auto relative mb-6">
-                    <input type="text" id="law-search-input" onkeyup="filterLaws()" placeholder="Nhập từ khóa tìm kiếm nội dung các điều luật..." class="w-full pl-11 pr-4 py-3.5 border border-slate-300 rounded-xl shadow-sm focus:ring-2 focus:ring-redcross-500 focus:border-redcross-500 text-sm">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-400"></i>
+                <div class="max-w-2xl mx-auto relative mb-8 reveal delay-100">
+                    <input type="text" id="law-search-input" onkeyup="filterLaws()" placeholder="Nhập từ khóa tìm kiếm nội dung các điều luật..." class="w-full pl-12 pr-4 py-4 border border-slate-300 rounded-2xl shadow-sm focus:ring-2 focus:ring-redcross-500 focus:border-redcross-500 text-sm transition">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4.5 top-4.5 text-slate-400 text-base"></i>
                 </div>
 
-                <!-- Results container -->
-                <div id="law-results" class="max-w-4xl mx-auto space-y-3 max-h-96 overflow-y-auto pr-2">
-                    <!-- Dynamic rendering -->
+                <!-- Results Container -->
+                <div id="law-results" class="max-w-4xl mx-auto space-y-3.5 max-h-96 overflow-y-auto pr-2 reveal delay-200">
+                    <!-- Rendered by JavaScript -->
                 </div>
             </div>
         </section>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-300 pt-12 pb-8 border-t border-slate-800">
+    <footer class="bg-slate-900 text-slate-300 pt-14 pb-8 border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                 <!-- Col 1 -->
                 <div>
                     <div class="flex items-center space-x-3 mb-4">
-                        <div class="w-10 h-10 bg-redcross-600 rounded-xl flex items-center justify-center text-white">
+                        <div class="w-10 h-10 bg-redcross-600 rounded-2xl flex items-center justify-center text-white shadow-md">
                             <div class="relative w-5 h-5 flex items-center justify-center">
-                                <div class="absolute w-4 h-1 bg-white"></div>
-                                <div class="absolute w-1 h-4 bg-white"></div>
+                                <div class="absolute w-4 h-1 bg-white rounded-xs"></div>
+                                <div class="absolute w-1 h-4 bg-white rounded-xs"></div>
                             </div>
                         </div>
-                        <span class="font-extrabold text-white text-base">HỘI CHỮ THẬP ĐỎ VIỆT NAM</span>
+                        <span class="font-black text-white text-base">HỘI CHỮ THẬP ĐỎ VIỆT NAM</span>
                     </div>
                     <p class="text-xs text-slate-400 leading-relaxed">
                         Cổng thông tin truyền thông tuyên truyền Luật Hoạt động Chữ thập đỏ (Luật số: 11/2008/QH12 do Quốc hội khóa XII thông qua) và tôn vinh 80 năm lịch sử hình thành phát triển Hội.
@@ -615,7 +688,7 @@
                 <!-- Col 3 -->
                 <div>
                     <h4 class="text-sm font-bold text-white uppercase tracking-wider mb-4">Thông tin liên hệ Trung ương Hội</h4>
-                    <div class="space-y-2 text-xs text-slate-400">
+                    <div class="space-y-2.5 text-xs text-slate-400">
                         <p><i class="fa-solid fa-location-dot mr-2 text-redcross-500"></i>Trụ sở TW Hội: 82 Nguyễn Du, Hà Nội</p>
                         <p><i class="fa-solid fa-phone mr-2 text-redcross-500"></i>Điện thoại: (024) 3822 4030</p>
                         <p><i class="fa-solid fa-envelope mr-2 text-redcross-500"></i>Email: vnrredcross@gmail.com</p>
@@ -630,21 +703,43 @@
         </div>
     </footer>
 
-    <!-- MODAL DIALOG FOR LAW DETAILS -->
-    <div id="modal-backdrop" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4">
-        <div id="modal-container" class="bg-white rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl transform scale-95 transition-transform duration-300 p-6 sm:p-8 relative">
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100">
-                <i class="fa-solid fa-xmark text-xl"></i>
+    <!-- MODAL DIALOG FOR LAW & EVENT DETAILS -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden opacity-0 transition-opacity duration-300 flex items-center justify-center p-4">
+        <div id="modal-container" class="bg-white rounded-3xl max-w-2xl w-full max-h-[85vh] overflow-y-auto shadow-2xl transform scale-95 transition-all duration-300 p-6 sm:p-8 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-100 transition">
+                <i class="fa-solid fa-xmark text-2xl"></i>
             </button>
             <div id="modal-content">
-                <!-- Injected via JS -->
+                <!-- Injected via JavaScript -->
             </div>
         </div>
     </div>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // 16 HISTORICAL MILESTONES (1946 - 2019)
+        // INTERSECTION OBSERVER FOR SCROLL REVEAL
+        function initScrollReveal() {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.12
+            };
+
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        obs.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // 16 HISTORICAL MILESTONES DATA (1946 - 2019)
         const timelineData = [
             {
                 date: "23/11/1946",
@@ -792,7 +887,7 @@
             }
         ];
 
-        // RENDER TIMELINE
+        // RENDER TIMELINE WITH ANIMATIONS
         function renderTimeline(eraFilter = 'all') {
             const container = document.getElementById('timeline-events-container');
             const filtered = eraFilter === 'all' 
@@ -801,36 +896,41 @@
 
             container.innerHTML = filtered.map((item, index) => {
                 const isEven = index % 2 === 0;
+                const revealClass = isEven ? 'reveal-left' : 'reveal-right';
+
                 return `
-                    <div class="relative flex flex-col md:flex-row items-center group">
-                        <!-- Left Content (Desktop Even) -->
+                    <div class="relative flex flex-col md:flex-row items-center group ${revealClass}">
+                        <!-- Left/Right Card -->
                         <div class="w-full md:w-1/2 md:pr-10 ${isEven ? 'md:text-right' : 'md:order-2 md:pl-10 md:text-left'} pl-10 md:pl-0">
-                            <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-slate-200 hover:border-redcross-300 hover:shadow-md transition">
+                            <div class="bg-white p-5 sm:p-6 rounded-3xl shadow-sm border border-slate-200/80 hover:border-redcross-300 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
                                 <div class="flex items-center space-x-2 ${isEven ? 'md:justify-end' : 'justify-start'} mb-2">
-                                    <span class="text-xs font-black text-redcross-600 bg-redcross-50 px-3 py-0.5 rounded-full border border-redcross-100">${item.date}</span>
-                                    <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">${item.badge}</span>
+                                    <span class="text-xs font-black text-redcross-600 bg-redcross-50 px-3 py-1 rounded-full border border-redcross-100">${item.date}</span>
+                                    <span class="text-[10px] font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg">${item.badge}</span>
                                 </div>
-                                <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-1">${item.title}</h3>
-                                <p class="text-xs text-redcross-700 font-medium mb-2"><i class="fa-solid fa-location-dot mr-1"></i>${item.location}</p>
-                                <p class="text-xs text-slate-600 leading-relaxed">${item.details}</p>
+                                <h3 class="text-base sm:text-lg font-black text-slate-900 mb-1 leading-snug">${item.title}</h3>
+                                <p class="text-xs text-redcross-700 font-semibold mb-2"><i class="fa-solid fa-location-dot mr-1"></i>${item.location}</p>
+                                <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">${item.details}</p>
                             </div>
                         </div>
 
-                        <!-- Central Timeline Node -->
-                        <div class="absolute left-4 md:left-1/2 transform -translate-x-1/2 w-9 h-9 rounded-full bg-redcross-600 border-4 border-white text-white flex items-center justify-center text-xs shadow-md z-10 group-hover:scale-110 transition">
+                        <!-- Pulsing Center Node -->
+                        <div class="absolute left-4 md:left-1/2 transform -translate-x-1/2 w-9 h-9 rounded-full bg-redcross-600 border-4 border-white text-white flex items-center justify-center text-xs shadow-md z-10 pulse-glow group-hover:scale-125 transition duration-300">
                             <i class="fa-solid ${item.icon}"></i>
                         </div>
 
-                        <!-- Empty Placeholder -->
+                        <!-- Spacer -->
                         <div class="hidden md:block w-1/2 ${isEven ? 'order-2' : 'order-1'}"></div>
                     </div>
                 `;
             }).join('');
+
+            // Re-init reveal observer for newly rendered timeline items
+            initScrollReveal();
         }
 
         function filterTimeline(era) {
             document.querySelectorAll('.era-btn').forEach(btn => {
-                btn.className = "era-btn px-4 py-2 text-xs font-bold rounded-full bg-white text-slate-700 hover:bg-redcross-50 border border-slate-200 transition";
+                btn.className = "era-btn px-5 py-2.5 text-xs font-extrabold rounded-full bg-white text-slate-700 hover:bg-redcross-50 border border-slate-200 transition duration-200 transform hover:scale-105";
             });
             
             const btnMap = {
@@ -841,13 +941,13 @@
             };
             
             if (btnMap[era]) {
-                document.getElementById(btnMap[era]).className = "era-btn px-4 py-2 text-xs font-bold rounded-full bg-redcross-600 text-white shadow-sm transition";
+                document.getElementById(btnMap[era]).className = "era-btn px-5 py-2.5 text-xs font-extrabold rounded-full bg-redcross-600 text-white shadow-md shadow-redcross-600/20 transition duration-200 transform hover:scale-105";
             }
 
             renderTimeline(era);
         }
 
-        // LAW DATABASE FOR MODALS & SEARCH
+        // LAW DATABASE FOR SEARCH & MODALS
         const lawDatabase = [
             {
                 id: 'modal-d7',
@@ -855,17 +955,17 @@
                 chapter: 'Chương II - Lĩnh vực 1',
                 content: `
                     <p class="mb-3"><strong>1. Hoạt động cứu trợ khẩn cấp:</strong> Hỗ trợ kịp thời, trực tiếp cho nạn nhân chiến tranh, thiên tai, dịch bệnh, hỏa hoạn, tai nạn giao thông và thảm họa khác bao gồm:</p>
-                    <ul class="list-disc pl-5 mb-4 text-slate-600 space-y-1">
+                    <ul class="list-disc pl-5 mb-4 text-slate-600 space-y-1.5">
                         <li>Cứu trợ bằng tiền, hiện vật và giúp đỡ khắc phục khó khăn ban đầu.</li>
                         <li>Động viên tinh thần, hỗ trợ tâm lý.</li>
                     </ul>
                     <p class="mb-3"><strong>2. Hoạt động trợ giúp nhân đạo:</strong> Trợ giúp cho người khuyết tật, người già không nơi nương tựa, trẻ em mồ côi, người có hoàn cảnh đặc biệt khó khăn:</p>
-                    <ul class="list-disc pl-5 mb-4 text-slate-600 space-y-1">
+                    <ul class="list-disc pl-5 mb-4 text-slate-600 space-y-1.5">
                         <li>Trợ giúp tiền, phương tiện, công sức.</li>
                         <li>Trợ giúp kinh phí học nghề, tạo việc làm.</li>
                         <li>Trợ giúp kinh phí khám chữa bệnh, phục hồi chức năng.</li>
                     </ul>
-                    <p class="p-3 bg-redcross-50 rounded-lg text-redcross-800 text-xs font-medium"><strong>Nguyên tắc thực hiện (Khoản 3):</strong> Ưu tiên nơi và đối tượng khó khăn nhất. Cứu trợ khẩn cấp giao ngay; trợ giúp nhân đạo bình xét công khai tại cộng đồng và UBND cấp xã xác nhận.</p>
+                    <p class="p-3.5 bg-redcross-50 rounded-2xl text-redcross-800 text-xs font-semibold border border-redcross-200"><strong>Nguyên tắc thực hiện (Khoản 3):</strong> Ưu tiên nơi và đối tượng khó khăn nhất. Cứu trợ khẩn cấp giao ngay; trợ giúp nhân đạo bình xét công khai tại cộng đồng và UBND cấp xã xác nhận.</p>
                 `
             },
             {
@@ -900,8 +1000,8 @@
                 title: 'Điều 10. Hiến máu, hiến mô, bộ phận cơ thể người & hiến xác',
                 chapter: 'Chương II - Lĩnh vực 4',
                 content: `
-                    <p class="mb-2"><strong>1. Hiến máu nhân đạo:</strong> Tuyên truyền, vận động hiến máu; tổ chức lực lượng, tiếp nhận máu và phối hợp với ngành y tế xét nghiệm, bảo quản đúng kỹ thuật.</p>
-                    <p class="mb-2"><strong>2. Hiến mô, bộ phận cơ thể & hiến xác:</strong> Tuyên truyền rộng rãi ý nghĩa nhân văn cao đẹp của việc hiến mô, tạng và hiến xác cho y học cứu người.</p>
+                    <p class="mb-3"><strong>1. Hiến máu nhân đạo:</strong> Tuyên truyền, vận động hiến máu; tổ chức lực lượng, tiếp nhận máu và phối hợp với ngành y tế xét nghiệm, bảo quản đúng kỹ thuật.</p>
+                    <p class="mb-3"><strong>2. Hiến mô, bộ phận cơ thể & hiến xác:</strong> Tuyên truyền rộng rãi ý nghĩa nhân văn cao đẹp của việc hiến mô, tạng và hiến xác cho y học cứu người.</p>
                 `
             },
             {
@@ -945,13 +1045,13 @@
             }
         ];
 
-        // SEARCH LAWS
+        // RENDER LAW SEARCH RESULTS
         function renderLawSearch(items) {
             const container = document.getElementById('law-results');
             if (items.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-6 text-slate-500 text-sm">
-                        <i class="fa-solid fa-circle-question text-2xl mb-2 text-slate-400"></i>
+                    <div class="text-center py-8 text-slate-500 text-sm">
+                        <i class="fa-solid fa-circle-question text-3xl mb-2 text-slate-300"></i>
                         <p>Không tìm thấy điều luật phù hợp với từ khóa.</p>
                     </div>
                 `;
@@ -959,10 +1059,10 @@
             }
 
             container.innerHTML = items.map(item => `
-                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl hover:border-redcross-300 transition cursor-pointer" onclick="openModal('${item.id}')">
-                    <div class="flex items-center justify-between mb-1">
-                        <span class="text-[10px] font-bold text-redcross-600 uppercase bg-redcross-100 px-2 py-0.5 rounded">${item.chapter}</span>
-                        <span class="text-xs text-slate-400">Xem chi tiết <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                <div class="p-4.5 bg-slate-50/80 border border-slate-200/80 rounded-2xl hover:border-redcross-300 hover:shadow-md transition duration-200 cursor-pointer" onclick="openModal('${item.id}')">
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-[10px] font-black text-redcross-600 uppercase bg-redcross-100 px-2.5 py-0.5 rounded-md">${item.chapter}</span>
+                        <span class="text-xs text-slate-400 font-semibold">Xem chi tiết <i class="fa-solid fa-chevron-right text-[10px] ml-1"></i></span>
                     </div>
                     <h4 class="font-bold text-slate-900 text-sm mb-1">${item.title}</h4>
                     <p class="text-xs text-slate-600 line-clamp-2">${item.content.replace(/<[^>]*>?/gm, '')}</p>
@@ -984,7 +1084,7 @@
             renderLawSearch(filtered);
         }
 
-        // MODAL CONTROLS
+        // MODAL DIALOG CONTROLS
         const backdrop = document.getElementById('modal-backdrop');
         const container = document.getElementById('modal-container');
         const modalContent = document.getElementById('modal-content');
@@ -994,8 +1094,8 @@
             if (!article) return;
 
             modalContent.innerHTML = `
-                <span class="text-xs font-bold text-redcross-600 uppercase tracking-widest">${article.chapter}</span>
-                <h3 class="text-xl font-bold text-slate-900 mt-1 mb-4 border-b border-slate-200 pb-3">${article.title}</h3>
+                <span class="text-xs font-black text-redcross-600 uppercase tracking-widest bg-redcross-100 px-3 py-1 rounded-md">${article.chapter}</span>
+                <h3 class="text-xl font-black text-slate-900 mt-2.5 mb-4 border-b border-slate-200 pb-3">${article.title}</h3>
                 <div class="text-sm text-slate-700 leading-relaxed">
                     ${article.content}
                 </div>
@@ -1030,23 +1130,24 @@
         menuBtn.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
             if (mobileMenu.classList.contains('hidden')) {
-                menuIcon.className = 'fa-solid fa-bars text-2xl';
+                menuIcon.className = 'fa-solid fa-bars text-xl';
             } else {
-                menuIcon.className = 'fa-solid fa-xmark text-2xl';
+                menuIcon.className = 'fa-solid fa-xmark text-xl';
             }
         });
 
         document.querySelectorAll('.mobile-link').forEach(link => {
             link.addEventListener('click', () => {
                 mobileMenu.classList.add('hidden');
-                menuIcon.className = 'fa-solid fa-bars text-2xl';
+                menuIcon.className = 'fa-solid fa-bars text-xl';
             });
         });
 
-        // INITIALIZATION
+        // INITIALIZE APP
         window.addEventListener('DOMContentLoaded', () => {
             renderTimeline();
             renderLawSearch(lawDatabase);
+            initScrollReveal();
         });
     </script>
 </body>
